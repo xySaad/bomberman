@@ -1,5 +1,5 @@
 import { Bomb } from "./bomb.js";
-import { CELL_SIZE, gameState } from "./script.js";
+import { CELL_SIZE } from "./script.js";
 
 export class Enemy {
   constructor() {
@@ -32,20 +32,31 @@ export class Enemy {
     this.waitingForBomb = false;
 
     setTimeout(() => {
-      this.goToPlayer({
-        get x() {
-          return gameState.characterX;
-        },
-        get y() {
-          return gameState.characterY;
-        },
-      });
+      requestAnimationFrame(() => this.moveRandomly());
       requestAnimationFrame((timestamp) => this.animateSprite(timestamp));
     }, 1000);
-
     return div;
   }
 
+  async moveRandomly() {    
+    const nextPoint = {
+      x: this.x,
+      y: this.y,
+    };
+
+    const randomSign = Math.random() > 0.5 ? -1 : 1;
+    const randomDirection = Math.random() > 0.5 ? "x" : "y";
+    nextPoint[randomDirection] += 1 * randomSign;
+
+    const nextBlock = document.querySelector(
+      `.floor[data-x="${nextPoint.x}"][data-y="${nextPoint.y}"]`
+    );
+
+    if (nextBlock) {
+      await this.step(randomSign, randomDirection);
+    }
+    requestAnimationFrame(() => this.moveRandomly());
+  }
   async goToPlayer(entity, forcedDirection) {
     const distanceX = entity.x - this.x;
     const distanceY = entity.y - this.y;
