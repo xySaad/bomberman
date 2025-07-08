@@ -19,12 +19,12 @@ export class User {
   }
 
   sendChat(message) {
-    this.socket.send(
-      JSON.stringify({
+    if (this.socket) {
+      this.socket.sendMessage({
         type: "chat",
         message,
-      })
-    );
+      });
+    }
   }
 }
 

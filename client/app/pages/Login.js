@@ -7,7 +7,7 @@ const ui = state({ state: "", error: "" });
 
 const handleSubmit = async () => {
   const trimmed = nickname.value.trim();
-  if (!trimmed) return alert("Please enter a nickname");
+  if (!trimmed) return;
 
   const user = new User(trimmed);
   SelfUser(user);

@@ -1,0 +1,14 @@
+.Chat-Container {
+    white-space: pre-line;
+    border: 1px solid #ccc;
+    margin-bottom: 8px;
+    padding: 4px;
+}
+
+.Chat-Messages {
+    overflow-y: auto;
+    height: 200px;
+    border: 1px solid #ccc;
+    margin-bottom: 8px;
+    padding: 4px;
+}

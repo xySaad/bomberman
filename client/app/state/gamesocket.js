@@ -7,7 +7,7 @@ export class GameSocket {
     ws.onopen = resolve;
     ws.onclose = reject;
     ws.onerror = reject;
-    ws.onmessage = this.handleMessage;
+    ws.onmessage = (e) => this.handleMessage(e);
   }
 
   handleMessage(ev) {
@@ -17,6 +17,11 @@ export class GameSocket {
         Game.players.push(msg.nickname);
       } else if (msg.type === "players_list") {
         Game.players.push(...msg.players);
+      } else if (msg.type === "chat") {
+        Game.chatMessages.push({
+          nickname: msg.nickname,
+          message: msg.message,
+        });
       }
     } catch (err) {
       console.log(err);

@@ -34,8 +34,14 @@ wss.on("connection", (ws) => {
   });
 
   ws.on("close", () => {
+    const user = clients.get(ws);
     clients.delete(ws);
-    console.log(`Disconnected: ${user.nickname}`);
+    if (user) {
+      // hadi gha bach kanhadli dik user is not defined bach maycrachilich server
+      console.log(`Disconnected: ${user.nickname}`);
+    } else {
+      console.log("Disconnected: unknown user");
+    }
   });
 });
 
