@@ -1,13 +1,13 @@
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
 import { handleWsMessage } from "./message_handling/index.js";
-import { generateMap } from "./map/generateMap.js";
+import { GameMap } from "./map/generateMap.js";
 
 const PORT = 3000;
 const server = createServer();
 const wss = new WebSocketServer({ server });
-const gameMap = generateMap();
-
+const map = new GameMap(15, 15);
+const gameMap = map.generate();
 export const clients = new Map();
 const getPlayersList = () => {
   return Array.from(clients.values()).map((player) => player);
