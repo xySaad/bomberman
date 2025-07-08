@@ -1,10 +1,12 @@
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
 import { handleWsMessage } from "./message_handling/index.js";
+import { generateMap } from "./map/generateMap.js";
 
 const PORT = 3000;
 const server = createServer();
 const wss = new WebSocketServer({ server });
+const gameMap = generateMap();
 
 export const clients = new Map();
 const getPlayersList = () => {
@@ -26,7 +28,12 @@ wss.on("connection", (ws) => {
       players: getPlayersList(),
     })
   );
-
+  ws.send(
+    JSON.stringify({
+      type: "game_map",
+      map: gameMap,
+    })
+  );
   ws.on("message", (raw) => {
     const data = JSON.parse(raw);
     const reply = handleWsMessage(ws, data);
@@ -34,7 +41,7 @@ wss.on("connection", (ws) => {
   });
 
   ws.on("close", () => {
-    const user =clients.get(ws);
+    const user = clients.get(ws);
     clients.delete(ws);
     console.log(`Disconnected: ${user.nickname}`);
   });
