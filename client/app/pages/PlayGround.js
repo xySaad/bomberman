@@ -43,4 +43,18 @@ const generateMap = () => {
     return map;
 };
 
+export const PlayGround = () => {
+    const map = generateMap();
+    console.log(map);
 
+    return html.div({ class: "playground-grid" }).add(...map.flatMap((row) =>
+        row.map((type) =>
+            html.div({
+                class: getClass[type] || "cell unknown",
+            })
+        )
+    ));
+   
+
+
+};
