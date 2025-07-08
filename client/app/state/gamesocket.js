@@ -17,6 +17,10 @@ export class GameSocket {
         Game.players.push(msg.nickname);
       } else if (msg.type === "players_list") {
         Game.players.push(...msg.players);
+      } else if (msg.type === "game_map") {
+        console.log(msg.map);
+        
+        Game.map = msg.map;
       }
     } catch (err) {
       console.log(err);
