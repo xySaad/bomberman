@@ -34,6 +34,7 @@ wss.on("connection", (ws) => {
   });
 
   ws.on("close", () => {
+    const user =clients.get(ws);
     clients.delete(ws);
     console.log(`Disconnected: ${user.nickname}`);
   });

@@ -1,0 +1,30 @@
+.playground-grid {
+  display: grid;
+  grid-template-columns: repeat(15, 32px);
+  grid-template-rows: repeat(15, 32px);
+  gap: 2px;
+}
+
+.cell {
+  width: 32px;
+  height: 32px;
+  box-sizing: border-box;
+  background-color: #ccc;
+  border: 1px solid #999;
+}
+
+.cell.wall {
+  background-color: #333;
+}
+
+.cell.ground {
+  background-color: #eee;
+}
+
+.cell.box {
+  background-color: #b17330;
+}
+
+.cell.unbreakable {
+  background-color: #666;
+}
