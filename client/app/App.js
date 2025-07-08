@@ -1,14 +1,15 @@
 import { router } from "rbind";
-import { SelfUser } from "./state/user.js";
-import { UserState } from "./types/user.js";
+import { SelfUser, User } from "./state/user.js";
 
 export const App = () => {
-  switch (SelfUser().state) {
-    case UserState.INIT:
+  switch (SelfUser.state) {
+    case User.STATES.CONNECTED:
       router.navigate("/login");
       break;
+    case User.STATES.REGISTERED:
+      router.navigate("/lobby");
     default:
       break;
   }
-  return ""
+  return "";
 };

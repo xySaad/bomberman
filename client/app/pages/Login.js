@@ -1,23 +1,20 @@
 import html, { state, router } from "rbind";
 import { SelfUser, User } from "../state/user.js";
+import { App } from "../App.js";
 const { div, h1, input, button } = html;
 
 const nickname = state("");
 const ui = state({ state: "", error: "" });
 
 const handleSubmit = async () => {
-  const trimmed = nickname.value.trim();
-  if (!trimmed) return alert("Please enter a nickname");
-
-  const user = new User(trimmed);
-  SelfUser(user);
-
-  ui.value = { state: "loading" };
-
   try {
-    await user.connect();
-    router.navigate("/lobby");
+    const trimmed = nickname.value.trim();
+    if (!trimmed) return alert("Please enter a nickname");
+    ui.value = { state: "loading" };
+
+    await SelfUser.connect(trimmed);
     ui.value = { state: "success" };
+    router.navigate("/lobby");
   } catch (error) {
     ui.value = {
       state: "error",
@@ -27,6 +24,7 @@ const handleSubmit = async () => {
 };
 
 export const Login = () => {
+  if (SelfUser.state !== User.STATES.CONNECTED) return App();
   return div({ class: "LoginPage" }).add(
     h1({ textContent: "Enter your nickname" }),
     input({
@@ -37,9 +35,7 @@ export const Login = () => {
       keydown: { enter: handleSubmit },
     }),
     button({
-      textContent: () =>
-        ui.value.state === "loading" ? "Connecting..." : "Login",
-      disabled: () => ui.value.state === "loading",
+      textContent: "Login",
       onclick: handleSubmit,
     }),
     div({ class: "feedback" }).add(($) => {

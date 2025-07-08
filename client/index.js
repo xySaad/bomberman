@@ -4,7 +4,9 @@ import { Login } from "./app/pages/Login.js";
 import { Lobby } from "./app/pages/Lobby.js";
 import { PlayGround } from "./app/pages/PlayGround.js";
 
-router.SetRoute("/", App);
-router.SetRoute("/login", Login);
-router.SetRoute("/lobby", Lobby);
-router.SetRoute("/play", PlayGround);
+router.setup({
+  "/": App,
+  "/login": Login,
+  "/lobby": Lobby,
+  "/play": PlayGround,
+});

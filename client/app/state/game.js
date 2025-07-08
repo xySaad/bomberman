@@ -1,4 +1,4 @@
 import { list } from "rbind";
-export const Game = {
+export const GameState = {
   players: list([]),
 };
