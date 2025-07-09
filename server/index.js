@@ -1,7 +1,6 @@
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
 import { User } from "./user.js";
-import { broadcast, clients, getPlayersList } from "./clientsStore.js";
 const PORT = 3000;
 const server = createServer();
 const wss = new WebSocketServer({ server });
