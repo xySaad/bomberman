@@ -17,7 +17,7 @@ export class User {
     new_player: (player) => GameState.players.push(player),
     player_disconnected: (player) =>
       GameState.players.purge((p) => p.nickname === player.nickname),
-    chat: (msg) => {      
+    chat: (msg) => {
       GameState.chatMessages.push({
         nickname: msg.nickname,
         message: msg.message,
@@ -57,6 +57,7 @@ export class User {
         this.state = User.STATES.REGISTERED;
         this.nickname = msg.nickname;
         GameState.players.push(...msg.players);
+        GameState.map = msg.map;
         resolve();
       });
 

@@ -1,4 +1,7 @@
-import { broadcast, clients, getPlayersList } from "./clientsStore.js";
+import { broadcast, players, getPlayersList } from "./playersStore.js";
+import { GameMap } from "./map/generateMap.js";
+const map = new GameMap(15, 15);
+const gameMap = map.generate();
 
 export class User {
   #ws = null;
@@ -21,7 +24,7 @@ export class User {
     });
 
     ws.on("close", () => {
-      clients.delete(this);
+      players.delete(this);
       broadcast({ type: "player_disconnected", nickname: this.nickname });
     });
   }
@@ -36,9 +39,14 @@ export class User {
     if (!data.nickname) return;
     const nickname = (this.nickname = data.nickname);
     // TODO: validate nickname
-    clients.add(this);
+    players.add(this);
 
-    this.send({ nickname, type: "self_register", players: getPlayersList() });
+    this.send({
+      nickname,
+      type: "self_register",
+      players: getPlayersList(),
+      map: gameMap,
+    });
     broadcast({ nickname, type: "new_player" }, this);
     console.log("logged in as", this.nickname);
   }

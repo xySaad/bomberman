@@ -1,0 +1,12 @@
+@import url("./static/css/chat.css");
+@import url("./static/css/map.css");
+
+.Lobby {
+  max-width: 500px;
+  margin: 40px auto;
+  font-family: system-ui, sans-serif;
+  background: #f9f9fb;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}

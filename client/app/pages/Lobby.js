@@ -1,13 +1,14 @@
-import html, { state } from "rbind";
+import html, { router, state } from "rbind";
 import { SelfUser, User } from "../state/user";
 import { GameState } from "../state/game";
 import { App } from "../App";
-const { div, h2, p, input, span } = html;
+const { div, h2, p, input, span, button } = html;
 
 export const Lobby = () => {
-  const message = state("");
   if (SelfUser.state !== User.STATES.REGISTERED) return App();
   const { players, chatMessages } = GameState;
+  const message = state("");
+console.log("lobby");
 
   return div({ class: "Lobby" }).add(
     h2({ textContent: `Hello ${SelfUser.nickname}` }),
@@ -24,13 +25,21 @@ export const Lobby = () => {
       input({
         is: { value: message },
         placeholder: "Enter your message",
-        onkeyup: (e) => {
-          if (e.key == "Enter" && message.value.trim().length > 0) {
-            SelfUser.sendChat(message.value);
-            message.value = "";
-          }
+        keydown: {
+          enter: () => {
+            if (message.value.trim().length > 0) {
+              SelfUser.sendChat(message.value);
+              message.value = "";
+            }
+          },
         },
       })
-    )
+    ),
+    button({
+      textContent: "Start Game",
+      onclick: () => {
+        router.navigate("/play");
+      },
+    })
   );
 };

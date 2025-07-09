@@ -1,7 +1,7 @@
-export const clients = new Set();
+export const players = new Set();
 
 export const getPlayersList = () => {
-  return Array.from(clients.values()).map((player) => {
+  return Array.from(players.values()).map((player) => {
     return {
       nickname: player.nickname,
     };
@@ -9,7 +9,7 @@ export const getPlayersList = () => {
 };
 
 export const broadcast = (msg, excluded) => {
-  clients.forEach((user) => {
+  players.forEach((user) => {
     if (user !== excluded) {
       user.send(msg);
     }
