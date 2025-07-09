@@ -5,6 +5,13 @@ export class User {
   nickname = "";
   #events = {
     register: (data) => this.register(data),
+    chat: (data) => {
+      broadcast({
+        type: "chat",
+        nickname: this.nickname,
+        message: data.message,
+      });
+    },
   };
   constructor(ws) {
     this.#ws = ws;

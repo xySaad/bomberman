@@ -17,6 +17,12 @@ export class User {
     new_player: (player) => GameState.players.push(player),
     player_disconnected: (player) =>
       GameState.players.purge((p) => p.nickname === player.nickname),
+    chat: (msg) => {      
+      GameState.chatMessages.push({
+        nickname: msg.nickname,
+        message: msg.message,
+      });
+    },
   };
 
   static async new(serverUrl = "ws://localhost:3000") {
@@ -64,6 +70,13 @@ export class User {
 
   on(event, handler) {
     this.#events[event] = handler;
+  }
+
+  sendChat(message) {
+    this.send({
+      type: "chat",
+      message,
+    });
   }
 }
 
