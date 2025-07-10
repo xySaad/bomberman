@@ -16,13 +16,21 @@ export const PlayGround = () => {
   const map = GameState.map;
   if (!map) return html.div({ textContent: "Waiting for map..." });
 
-  return html.div({ class: "playground-grid" }).add(
-    ...map.flatMap((row) =>
-      row.map((type) =>
-        html.div({
-          class: getClass[type] || "unknown",
-        })
-      )
+   return html.div({ class: "playground-grid" }).add(
+    ...map.flatMap((row, y) =>
+      row.map((type, x) => {
+        const base = html.div({ class: getClass[type] || "unknown" });
+
+        const player = GameState.players.value.find(
+          (p) => p.position?.x === x && p.position?.y === y
+        );
+
+        if (player) {
+          base.add(html.div({ class: "player" }));
+        }
+
+        return base;
+      })
     )
   );
 };

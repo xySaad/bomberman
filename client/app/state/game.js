@@ -4,4 +4,5 @@ export const GameState = {
   chatMessages: list([]),
   map: null,
   counter: state(0),
+  position: null,
 };
