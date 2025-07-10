@@ -1,7 +1,5 @@
 import { broadcast, players, getPlayersList } from "./playersStore.js";
-import { GameMap } from "./map/generateMap.js";
-const map = new GameMap(15, 15);
-const gameMap = map.generate();
+import { GameState, updateCountdown } from "./index.js";
 
 export class User {
   #ws = null;
@@ -35,18 +33,20 @@ export class User {
   send(msg) {
     this.#ws.send(JSON.stringify(msg));
   }
-  register(data) {
+  async register(data) {
     if (!data.nickname) return;
     const nickname = (this.nickname = data.nickname);
     // TODO: validate nickname
     players.add(this);
+    updateCountdown();
 
     this.send({
       nickname,
       type: "self_register",
       players: getPlayersList(),
-      map: gameMap,
+      map: GameState.map,
     });
+
     broadcast({ nickname, type: "new_player" }, this);
     console.log("logged in as", this.nickname);
   }

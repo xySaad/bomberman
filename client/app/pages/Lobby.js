@@ -6,13 +6,13 @@ const { div, h2, p, input, span, button } = html;
 
 export const Lobby = () => {
   if (SelfUser.state !== User.STATES.REGISTERED) return App();
-  const { players, chatMessages } = GameState;
+  const { players, chatMessages, counter } = GameState;
   const message = state("");
-console.log("lobby");
 
   return div({ class: "Lobby" }).add(
     h2({ textContent: `Hello ${SelfUser.nickname}` }),
     p({ textContent: ($) => `Players in lobby: ${$(players).length}/4` }),
+    p({ textContent: ($) => `waiting for players: ${$(counter)}s` }),
     div({ class: "Chat-Container" }).add(
       div({ class: "Chat-Messages" }).add(
         chatMessages.map((msg) =>
@@ -36,8 +36,9 @@ console.log("lobby");
       })
     ),
     button({
-      textContent: "Start Game",
+      textContent: "Start Game (debug only)",
       onclick: () => {
+        SelfUser.state = User.STATES.READY
         router.navigate("/play");
       },
     })
