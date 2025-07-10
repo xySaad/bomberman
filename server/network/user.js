@@ -1,6 +1,6 @@
-import { broadcast, players, getPlayersList } from "./playersStore.js";
-import { GameState, updateCountdown } from "./index.js";
-import { PLAYER_SPAWNS } from "./map/generateMap.js";
+import { players, broadcast, getPlayersList } from "./players.js";
+import { GameState, updateCountdown } from "../game/state.js";
+import { PLAYER_SPAWNS } from "../game/map.js";
 
 export class User {
   #ws = null;
@@ -15,6 +15,7 @@ export class User {
       });
     },
   };
+
   constructor(ws) {
     this.#ws = ws;
     ws.on("message", (raw) => {
@@ -31,30 +32,35 @@ export class User {
   on(event, handler) {
     this.#events[event] = handler;
   }
+
   send(msg) {
     this.#ws.send(JSON.stringify(msg));
   }
+
   async register(data) {
     if (!data.nickname) return;
-    const nickname = (this.nickname = data.nickname);
-    // TODO: validate nickname
+    this.nickname = data.nickname;
     players.add(this);
 
     let index = 0;
     for (let player of players) {
-      const pos = PLAYER_SPAWNS[index++];
-      player.position = pos;
+      player.position = PLAYER_SPAWNS[index++];
     }
+
     updateCountdown();
 
     this.send({
-      nickname,
+      nickname: this.nickname,
       type: "self_register",
       players: getPlayersList(),
       map: GameState.map,
     });
 
-    broadcast({ position: this.position, nickname, type: "new_player" }, this);
+    broadcast(
+      { position: this.position, nickname: this.nickname, type: "new_player" },
+      this
+    );
+
     console.log("logged in as", this.nickname);
   }
 }
