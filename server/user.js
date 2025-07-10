@@ -42,9 +42,14 @@ export class User {
 
 
    let index = 0;
-  for (let player of players) {
-    player.position = PLAYER_SPAWNS[index++];
+ for (let player of players) {
+  const pos = PLAYER_SPAWNS[index++];
+  player.position = pos;
+// this position for this player hh
+  if (player === this) {
+    this.position = pos;
   }
+}
   console.log(index);
   console.log(players);
   
