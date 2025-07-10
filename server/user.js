@@ -1,5 +1,6 @@
 import { broadcast, players, getPlayersList } from "./playersStore.js";
 import { GameState, updateCountdown } from "./index.js";
+import { PLAYER_SPAWNS } from "./map/generateMap.js";
 
 export class User {
   #ws = null;
@@ -38,6 +39,12 @@ export class User {
     const nickname = (this.nickname = data.nickname);
     // TODO: validate nickname
     players.add(this);
+
+    let index = 0;
+    for (let player of players) {
+      const pos = PLAYER_SPAWNS[index++];
+      player.position = pos;
+    }
     updateCountdown();
 
     this.send({
@@ -47,7 +54,7 @@ export class User {
       map: GameState.map,
     });
 
-    broadcast({ nickname, type: "new_player" }, this);
+    broadcast({ position: this.position, nickname, type: "new_player" }, this);
     console.log("logged in as", this.nickname);
   }
 }
