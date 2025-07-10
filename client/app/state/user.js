@@ -1,3 +1,4 @@
+import { router } from "rbind";
 import { GameState } from "./game";
 
 export class User {
@@ -22,6 +23,13 @@ export class User {
         nickname: msg.nickname,
         message: msg.message,
       });
+    },
+    counter: (msg) => {
+      GameState.counter.value = msg.counter;
+    },
+    game_started: () => {
+      SelfUser.state = User.STATES.READY;
+      router.navigate("/play");
     },
   };
 

@@ -8,6 +8,10 @@ export const App = () => {
       break;
     case User.STATES.REGISTERED:
       router.navigate("/lobby");
+
+    case User.STATES.READY:
+      router.navigate("/play");
+
     default:
       break;
   }
