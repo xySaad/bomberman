@@ -4,6 +4,7 @@ export const getPlayersList = () => {
   return Array.from(players.values()).map((player) => {
     return {
       nickname: player.nickname,
+      position: player.position,
     };
   });
 };
