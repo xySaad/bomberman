@@ -9,50 +9,61 @@ const getClass = {
   2: "box",
   3: "unbreakable",
 };
- function HandleMove(e) {
-  const { players } = GameState;
-  const player = players.value.find((p) => p.id === SelfUser.id);
-  if (!player) return;
 
-  const { position } = player.$;
-  console.log(e.key);   
-  
-  let { x, y } = position.value;
-
-  switch (e.key) {
-    case "ArrowUp":
-      y -= 1;
-    console.log("UP");
-
-      break;
-    case "ArrowDown":
-      y += 1;
-    console.log("Down");
-
-      break;
-    case "ArrowLeft":
-      x -= 1;
-    console.log("Left");
-
-      break;
-    case "ArrowRight":
-      x += 1;
-    console.log("right");
-
-      break;
-    case " ":
-    case "Spacebar":
-      console.log("Spacebar action!");
-      return;
-    default:
-      return;
+  function canMoveTo(x, y) {
+    const { map } = GameState;
+    if (!map[y] || map[y][x] === undefined) return false; 
+    return map[y][x] === 1;
   }
-  player.$.position.value = { x, y };
-  console.log("Moved to:", x, y);
-  console.log(position);
-  
-}
 
+  function HandleMove(e) {
+    const { players } = GameState;
+    const player = players.value.find((p) => p.id === SelfUser.id);
+    if (!player) return;
+
+    const { position } = player.$;
+    let { x, y } = position.value;
+
+    let nextX = x;
+    let nextY = y;
+
+    switch (e.key) {
+      
+      case "ArrowUp":
+        nextY -= 1;
+        break;
+      case "ArrowDown":
+        nextY += 1;
+        break;
+      case "ArrowLeft":
+        nextX -= 1;
+        break;
+      case "ArrowRight":
+        nextX += 1;
+        break;
+      case " ":
+        console.log("Booommmmm ");
+        const { bombs } = GameState;
+        const existing = bombs.value.find(b => b.x === x && b.y === y);
+        if (!existing) {
+          bombs.value = [...bombs.value, { x, y }];
+          console.log("Bomb placed at:", x, y);
+        } else {
+          console.log("Bomb already exists here");
+        }
+        return;
+        
+      default:
+        return;
+    }
+
+    if (canMoveTo(nextX, nextY)) {
+      player.$.position.value = { x: nextX, y: nextY };
+      console.log(nextX, nextY);
+    } else {
+      console.log("Blocked move to:", nextX, nextY);
+    }
+  }
     window.addEventListener("keyup", HandleMove);
   export const PlayGround = () => {
     if (SelfUser.state !== User.STATES.READY) return App();
