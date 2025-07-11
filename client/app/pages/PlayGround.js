@@ -78,6 +78,12 @@ const getClass = {
         div({ class: "playground-grid" }).add(
           ...map.flat().map((type) => div({ class: getClass[type] || "unknown" }))
         ),
+        ...GameState.bombs.value.map((bomb) =>
+          div({
+            class: "bomb",
+            style: `transform: translate(${bomb.x * OFFSET}px, ${bomb.y * OFFSET}px);`,
+          })
+        ),
         players.map((player) => {
           const pos = player.$.position;
           return div({
