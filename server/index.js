@@ -1,71 +1,32 @@
 import { WebSocketServer } from "ws";
 import { createServer } from "http";
-import { User } from "./user.js";
-import { GameMap } from "./map/generateMap.js";
-import { broadcast, players } from "./playersStore.js";
+import { User } from "./network/user.js";
+import { GamePool } from "./game/pool.js";
 
 const PORT = 3000;
 const server = createServer();
 const wss = new WebSocketServer({ server });
-const map = new GameMap(15, 15);
-export const GAME_STATES = {
-  INIT: 0,
-  WAITING: 1,
-  GETTING_READY: 2,
-  STARTED: 3,
-  ENDED: 4,
-};
-
-export const GameState = {
-  minPlayers: 2,
-  maxPlayers: 4,
-  map: map.generate(),
-  state: GAME_STATES.WAITING,
-  counter: 0,
-  cancelCountdown: null,
-};
-export const startCountdown = (sec) => {
-  let resolver;
-  let interval
-  const untilTimerFinish = new Promise((resolve) => {
-    resolver = resolve;
-    let counter = sec;
-    interval = setInterval(() => {
-      broadcast({ type: "counter", counter: counter-- });
-      if (counter === 0) {
-        resolve();
-        clearInterval(interval);
-      }
-    }, 1000);
-  });
-  const cancelTimer = () => {
-    clearInterval(interval);
-    resolver();
-  };
-  return [untilTimerFinish, cancelTimer];
-};
-export const updateCountdown = async () => {
-  if (players.size === GameState.minPlayers) {
-    const [untilTimerFinish, cancelTimer] = startCountdown(20);
-    GameState.cancelCountdown = cancelTimer;
-    await untilTimerFinish;
-    const [readyFinished] = startCountdown(10);
-    await readyFinished;
-
-    GameState.state = GAME_STATES.STARTED;
-    broadcast({ type: "game_started" });
-  } else if (players.size === GameState.maxPlayers) {
-    GameState.cancelCountdown();
-  }
-};
+const gamePool = new GamePool();
 
 wss.on("connection", (ws) => {
   const user = new User(ws);
+  user.on("register", (data) => {
+    const game = gamePool.lookup();
+    const player = game.addPlayer(user, data.nickname);
+    console.log("logged in as", player.nickname);
+    player.cleanup = () => game.deletePlayer(player);
+    player.on("chat", (data) => {
+      game.broadcast({
+        type: "chat",
+        nickname: player.nickname,
+        message: data.message,
+      });
+    });
+  });
+
   console.log("New connection");
 });
 
 server.listen(PORT, () => {
-  console.log(
-    `🚀 Bomberman WebSocket server running on ws://localhost:${PORT}`
-  );
+  console.log(`🚀 Server running on ws://localhost:${PORT}`);
 });
