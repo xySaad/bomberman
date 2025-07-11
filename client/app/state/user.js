@@ -60,7 +60,7 @@ export class User {
   }
 
   async connect(nickname) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.on("self_register", (msg) => {
         this.state = User.STATES.REGISTERED;
         this.nickname = msg.nickname;
@@ -69,7 +69,9 @@ export class User {
         GameState.position = msg.position;
         resolve();
       });
-
+      this.on("register_error", (msg) => {
+        reject(msg.reason);
+      });
       this.send({ type: "register", nickname });
     });
   }

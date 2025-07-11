@@ -13,6 +13,7 @@ wss.on("connection", (ws) => {
   user.on("register", (data) => {
     const game = gamePool.lookup();
     const player = game.addPlayer(user, data.nickname);
+    if (player === null) return;
     console.log("logged in as", player.nickname);
     player.cleanup = () => game.deletePlayer(player);
     player.on("chat", (data) => {

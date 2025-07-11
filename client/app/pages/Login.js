@@ -15,10 +15,10 @@ const handleSubmit = async () => {
     await SelfUser.connect(trimmed);
     ui.value = { state: "success" };
     router.navigate("/lobby");
-  } catch (error) {
+  } catch (error) {    
     ui.value = {
       state: "error",
-      error: error?.message || "Connection failed.",
+      error: error || "Connection failed.",
     };
   }
 };

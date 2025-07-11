@@ -20,9 +20,15 @@ export class Player extends User {
     });
     this.position = PLAYER_SPAWNS[game.players.size];
   }
-
   static fromUser = class PlayerFromUser extends this {
     constructor(user, nickname, game) {
+      if (game.hasNickname(nickname)) {
+        user.send({
+          type: "register_error",
+          reason: "Nickname already taken",
+        });
+        throw Error("Nickname already taken");
+      }
       super(user.ws, nickname, game);
     }
   };

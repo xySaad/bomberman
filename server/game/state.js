@@ -42,7 +42,7 @@ export class Game {
   constructor(gamePool) {
     this.#gamePool = gamePool;
   }
-  
+
   async updateCountdown() {
     if (this.#players.size === this.#minPlayers) {
       try {
@@ -68,17 +68,25 @@ export class Game {
     }));
   }
 
+  hasNickname(nickname) {
+    return [...this.#players].some(
+      (p) => p.nickname.toLowerCase() === nickname.toLowerCase()
+    );
+  }
   addPlayer(user, nickname) {
-    const player = new Player.fromUser(user, nickname, this);
-
-    this.players.add(player);
-    this.broadcast({
-      position: player.position,
-      nickname: player.nickname,
-      type: "new_player",
-    });
-    this.updateCountdown();
-    return player;
+    try {
+      const player = new Player.fromUser(user, nickname, this);
+      this.players.add(player);
+      this.broadcast({
+        position: player.position,
+        nickname: player.nickname,
+        type: "new_player",
+      });
+      this.updateCountdown();
+      return player;
+    } catch (error) {
+      return null;
+    }
   }
 
   deletePlayer(player) {
