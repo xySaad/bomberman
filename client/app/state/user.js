@@ -31,6 +31,21 @@ export class User {
       SelfUser.state = User.STATES.READY;
       router.navigate("/play");
     },
+    player_move: (data) => {
+
+      const player = GameState.players.value.find(p => p.nickname === data.nickname);
+      if (player && player.nickname !== SelfUser.nickname) {
+
+        player.$.position.value = { x: data.x, y: data.y };
+      }
+    },
+    bomb_placed: (data) => {
+      const { bombs } = GameState;
+      const existing = bombs.value.find(b => b.x === data.x && b.y === data.y);
+      if (!existing) {
+        bombs.value = [...bombs.value, { x: data.x, y: data.y }];
+      }
+    }
   };
 
   static async new(serverUrl = "ws://localhost:3000") {

@@ -14,7 +14,6 @@ export const Lobby = () => {
     p({ textContent: ($) => `Players in lobby: ${$(players).length}/4` }),
     p({
       textContent: ($) =>
-        console.log($(counter)) ||
         "waiting for players" +
           ($(counter) !== null ? `: ${counter.value}s` : ""),
     }),

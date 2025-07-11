@@ -18,6 +18,15 @@ export class Player extends User {
       players: game.getPlayersList(),
       map: game.map,
     });
+    this.on("player_move", (data) => {
+    this.position = data.position;
+
+    this.#game.broadcast({
+      type: "player_move",
+      nickname: this.nickname,
+      position: this.position,
+    });
+  });
     this.position = PLAYER_SPAWNS[game.players.size];
   }
 

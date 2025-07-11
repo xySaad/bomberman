@@ -22,6 +22,28 @@ wss.on("connection", (ws) => {
         message: data.message,
       });
     });
+    player.on("player_move", (data) => {
+      console.log(data);
+      
+      player.position = { x: data.x, y: data.y };
+
+      game.broadcast({
+        type: "player_move",
+        nickname: player.nickname,
+        x: data.x,
+        y: data.y
+      });
+    });
+
+
+    player.on("place_bomb", (data) => {
+      game.broadcast({
+        type: "bomb_placed",
+        nickname: player.nickname,
+        x: data.x,
+        y: data.y
+      });
+    });
   });
 
   console.log("New connection");
