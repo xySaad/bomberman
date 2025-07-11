@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "nodemon --exec 'node --trace-warnings' index.js",
     "start": "node index.js"
   },
   "dependencies": {

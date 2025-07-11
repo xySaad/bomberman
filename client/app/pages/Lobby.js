@@ -12,7 +12,12 @@ export const Lobby = () => {
   return div({ class: "Lobby" }).add(
     h2({ textContent: `Hello ${SelfUser.nickname}` }),
     p({ textContent: ($) => `Players in lobby: ${$(players).length}/4` }),
-    p({ textContent: ($) => `waiting for players: ${$(counter)}s` }),
+    p({
+      textContent: ($) =>
+        console.log($(counter)) ||
+        "waiting for players" +
+          ($(counter) !== null ? `: ${counter.value}s` : ""),
+    }),
     div({ class: "Chat-Container" }).add(
       div({ class: "Chat-Messages" }).add(
         chatMessages.map((msg) =>
@@ -38,7 +43,7 @@ export const Lobby = () => {
     button({
       textContent: "Start Game (debug only)",
       onclick: () => {
-        SelfUser.state = User.STATES.READY
+        SelfUser.state = User.STATES.READY;
         router.navigate("/play");
       },
     })

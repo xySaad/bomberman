@@ -16,7 +16,7 @@ export class User {
   #socket = null;
   #events = {
     new_player: (player) => GameState.players.push(player),
-    player_disconnected: (player) =>
+    player_deleted: (player) =>
       GameState.players.purge((p) => p.nickname === player.nickname),
     chat: (msg) => {
       GameState.chatMessages.push({
@@ -66,7 +66,7 @@ export class User {
         this.nickname = msg.nickname;
         GameState.players.push(...msg.players);
         GameState.map = msg.map;
-         GameState.position = msg.position;
+        GameState.position = msg.position;
         resolve();
       });
 
