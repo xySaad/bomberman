@@ -68,22 +68,30 @@ const getClass = {
   export const PlayGround = () => {
     if (SelfUser.state !== User.STATES.READY) return App();
 
-    const { players, map } = GameState;
+    const { players, map,bombs } = GameState;
     const TILE_SIZE = 42;
     const GAP = 2;
     const OFFSET = TILE_SIZE + GAP;
-
+ console.log("Bombs:", bombs.value);
     return div({ class: "playground" }).add(
       div({ class: "grid-wrapper" }).add(
         div({ class: "playground-grid" }).add(
           ...map.flat().map((type) => div({ class: getClass[type] || "unknown" }))
         ),
-        ...GameState.bombs.value.map((bomb) =>
-          div({
-            class: "bomb",
-            style: `transform: translate(${bomb.x * OFFSET}px, ${bomb.y * OFFSET}px);`,
-          })
-        ),
+        ...bombs.value.map((bomb) => 
+          
+          
+        div({
+          class: "bomb",
+          style: ($) => {
+
+            const bomb = $(bombs);
+           
+            if (!bomb) return 'display: none;';
+            return `transform: translate(${bomb.x * OFFSET}px, ${bomb.y * OFFSET}px);`;
+          }
+        })
+      ),
         players.map((player) => {
           const pos = player.$.position;
           return div({

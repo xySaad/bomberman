@@ -69,3 +69,18 @@
   top: 0;
   left: 0;
 }
+
+
+.bomb {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  background-image: url("../images/bomb.gif"); /* Make sure this path is correct */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
