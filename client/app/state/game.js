@@ -5,5 +5,5 @@ export const GameState = {
   map: null,
   counter: state(null),
   position: null,
-  bombs: list([]), // List to hold bomb positions
+  bombs: list([]),
 };
