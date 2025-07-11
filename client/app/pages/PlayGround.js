@@ -2,7 +2,7 @@ import html from "rbind";
 import { GameState } from "../state/game";
 import { SelfUser, User } from "../state/user";
 import { App } from "../App";
-
+const { div } = html;
 const getClass = {
   0: "wall",
   1: "ground",
@@ -13,16 +13,26 @@ const getClass = {
 export const PlayGround = () => {
   if (SelfUser.state !== User.STATES.READY) return App();
 
-  const map = GameState.map;
-  if (!map) return html.div({ textContent: "Waiting for map..." });
+  const { players, map } = GameState;
+  const TILE_SIZE = 42;
+  const GAP = 2;
+  const OFFSET = TILE_SIZE + GAP;
 
-  return html.div({ class: "playground-grid" }).add(
-    ...map.flatMap((row) =>
-      row.map((type) =>
-        html.div({
-          class: getClass[type] || "unknown",
-        })
-      )
+  return div({ class: "playground" }).add(
+    div({ class: "grid-wrapper" }).add(
+      div({ class: "playground-grid" }).add(
+        ...map.flat().map((type) => div({ class: getClass[type] || "unknown" }))
+      ),
+      players.map((player) => {
+        const pos = player.$.position;
+        return div({
+          class: "player",
+          style: ($) =>
+            `transform: translate(${$(pos).x * OFFSET}px, ${
+              $(pos).y * OFFSET
+            }px);`,
+        });
+      })
     )
   );
 };

@@ -42,3 +42,11 @@ export class GameMap {
     return map;
   }
 }
+
+
+export const PLAYER_SPAWNS = [
+  { x: 1, y: 1 },                         // Top-left
+  { x: 13, y: 1 },                        // Top-right
+  { x: 1, y: 13 },                        // Bottom-left
+  { x: 13, y: 13 },                       // Bottom-right
+];

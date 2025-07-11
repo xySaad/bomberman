@@ -1,12 +1,21 @@
+.playground {
+  position: relative;
+}
+
+.grid-wrapper {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+}
+
+/* Remove padding from .playground-grid */
 .playground-grid {
   display: grid;
-  grid-template-columns: repeat(15, 42px);  /* Increase size here */
+  grid-template-columns: repeat(15, 42px);
   grid-template-rows: repeat(15, 42px);
   gap: 2px;
   background-color: #111;
-  padding: 10px;
   border: 2px solid #222;
-  width: max-content;
   margin: auto;
 }
 
@@ -28,7 +37,7 @@
 /* Specific styles */
 .wall {
   background-color: #333;
-  background-image: url('./wall.png'); /* Optional image */
+  background-image: url("./wall.png"); /* Optional image */
 }
 
 .ground {
@@ -37,10 +46,26 @@
 
 .box {
   background-color: #b17330;
-  background-image: url('../images/box.png'); /* Your box image here */
+  background-image: url("../images/box.png"); /* Your box image here */
 }
 
 .unbreakable {
   background-color: #666;
-  background-image: url('./unbreakable.png'); /* Optional image */
+  background-image: url("./unbreakable.png"); /* Optional image */
+}
+
+.player {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  background-image: url("../images/player.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 4px;
+  z-index: 10;
+  transition: transform 0.15s;
+  pointer-events: none;
+  top: 0;
+  left: 0;
 }

@@ -66,6 +66,7 @@ export class User {
         this.nickname = msg.nickname;
         GameState.players.push(...msg.players);
         GameState.map = msg.map;
+         GameState.position = msg.position;
         resolve();
       });
 
