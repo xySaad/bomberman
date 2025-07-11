@@ -12,22 +12,16 @@ export class Player extends User {
     super(ws);
     this.#game = game;
     this.#nickname = nickname;
+    this.position = PLAYER_SPAWNS[game.players.size];
+
     this.send({
       nickname: nickname,
       type: "self_register",
       players: game.getPlayersList(),
       map: game.map,
+       position: this.position,
     });
-    this.on("player_move", (data) => {
-    this.position = data.position;
 
-    this.#game.broadcast({
-      type: "player_move",
-      nickname: this.nickname,
-      position: this.position,
-    });
-  });
-    this.position = PLAYER_SPAWNS[game.players.size];
   }
 
   static fromUser = class PlayerFromUser extends this {

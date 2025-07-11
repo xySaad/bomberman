@@ -24,7 +24,6 @@ wss.on("connection", (ws) => {
     });
     player.on("player_move", (data) => {
       console.log(data);
-      
       player.position = { x: data.x, y: data.y };
 
       game.broadcast({

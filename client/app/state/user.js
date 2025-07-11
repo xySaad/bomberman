@@ -32,13 +32,12 @@ export class User {
       router.navigate("/play");
     },
     player_move: (data) => {
-
       const player = GameState.players.value.find(p => p.nickname === data.nickname);
       if (player && player.nickname !== SelfUser.nickname) {
-
         player.$.position.value = { x: data.x, y: data.y };
       }
     },
+
     bomb_placed: (data) => {
       const { bombs } = GameState;
       const existing = bombs.value.find(b => b.x === data.x && b.y === data.y);

@@ -59,10 +59,11 @@ function HandleMove(e) {
 
   if (canMoveTo(nextX, nextY)) {
     player.$.position.value = { x: nextX, y: nextY };
-    SelfUser.send({
-    type: "player_move",
-    position: { x: nextX, y: nextY },
-  });
+ SelfUser.send({
+  type: "player_move",
+  x: nextX,
+  y: nextY,
+});
     console.log(nextX, nextY);
   } else {
     console.log("Blocked move to:", nextX, nextY);
