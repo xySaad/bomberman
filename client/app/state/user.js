@@ -46,13 +46,26 @@ export class User {
       }
     },
 
-    bomb_placed: (data) => {
+   bomb_placed: (data) => {
+      console.log("Bomb placed by:", data.nickname, "at", data.x, data.y);
       const { bombs } = GameState;
-      const existing = bombs.value.find(b => b.x === data.x && b.y === data.y);
-      if (!existing) {
-        bombs.value = [...bombs.value, { x: data.x, y: data.y }];
-      }
+      const newBomb = {
+        x: data.x,
+        y: data.y,
+        owner: data.nickname,
+        id: `${data.nickname}_${data.x}_${data.y}_${Date.now()}` 
+      };
+      
+      bombs.value = [...bombs.value, newBomb];
+      console.log("Bomb added to GameState:", newBomb);
+    },
+    bomb_exploded: (data) => {
+      console.log("Bomb exploded:", data.bombId);
+      const { bombs } = GameState;
+      bombs.value = bombs.value.filter(b => b.id !== data.bombId);
+      console.log("Bomb removed from GameState");
     }
+  
   };
 
   static async new(serverUrl = "ws://localhost:3000") {

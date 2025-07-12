@@ -48,13 +48,23 @@ function HandleMove(e) {
     case " ":
       console.log("Booommmmm ");
       const { bombs } = GameState;
-      const existing = bombs.value.find(b => b.x === x && b.y === y);
-      if (!existing) {
-        bombs.value = [...bombs.value, { x, y }];
-        console.log("Bomb placed at:", x, y);
-      } else {
-        console.log("Bomb already exists here");
+      const playerHasBomb = bombs.value.find(b => b.owner === SelfUser.nickname);
+      if (playerHasBomb) {
+        console.log("You already have a bomb placd!");
+        return;
       }
+
+      const existingBomb = bombs.value.find(b => b.x === x && b.y === y);
+      if (existingBomb) {
+        console.log("Bomb alrady exist at this position");
+        return;
+      }
+      SelfUser.send({
+        type: "place_bomb",
+        x: x,
+        y: y
+      });
+      
       return;
 
     default:
@@ -94,6 +104,8 @@ export const PlayGround = () => {
           ...w(bombs).map((bomb) => 
             div({
               class: "bomb",
+              'data-owner': bomb.owner,
+              title: `${bomb.owner}'s bomb`,
               style: `transform: translate(${bomb.x * OFFSET}px, ${bomb.y * OFFSET}px);`
             })
           )

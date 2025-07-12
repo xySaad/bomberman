@@ -7,6 +7,7 @@ export class Player extends User {
     return this.#nickname;
   }
   position = { x: 0, y: 0 };
+   hasBomb = false;
   #game = null;
   constructor(ws, nickname, game) {
     super(ws);

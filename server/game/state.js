@@ -8,8 +8,9 @@ export class Game {
     GETTING_READY: "GETTING_READY", // maximum players joined, or minimum players joined and waiting timer finished
     STARTED: "STARTED", // ready timer has finished
     ENDED: "ENDED", // only one player left or the time limit has ended
+    
   };
-
+bombs = [];
   #timeLimit = 3 * 60 * 1000; // 3 minutes time limit for each game
   #minPlayers = 2;
   get minPlayers() {
@@ -82,6 +83,14 @@ export class Game {
   }
 
   deletePlayer(player) {
+      const playerBombs = this.bombs.filter(bomb => bomb.owner === player.nickname);
+    playerBombs.forEach(bomb => {
+      if (bomb.timer) {
+        clearTimeout(bomb.timer);
+      }
+    });
+    this.bombs = this.bombs.filter(bomb => bomb.owner !== player.nickname);
+
     this.players.delete(player);
     this.broadcast({ type: "player_deleted", nickname: player.nickname });
 
