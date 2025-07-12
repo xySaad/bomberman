@@ -32,9 +32,17 @@ export class User {
       router.navigate("/play");
     },
     player_move: (data) => {
+      console.log("moveee", data);
       const player = GameState.players.value.find(p => p.nickname === data.nickname);
-      if (player && player.nickname !== SelfUser.nickname) {
-        player.$.position.value = { x: data.x, y: data.y };
+      if (player) {
+        if (player.nickname !== SelfUser.nickname) {
+          console.log(`Updat  ${player.nickname} to`, data.x, data.y);
+          player.$.position.value = { x: data.x, y: data.y };
+        } else {
+          console.log(`Ignoring position update for current user: ${player.nickname}`);
+        }
+      } else {
+        console.warn("Player not found:", data.nickname);
       }
     },
 

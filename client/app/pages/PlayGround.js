@@ -18,8 +18,12 @@ function canMoveTo(x, y) {
 
 function HandleMove(e) {
   const { players } = GameState;
-  const player = players.value.find((p) => p.id === SelfUser.id);
-  if (!player) return;
+  
+  const player = players.value.find((p) => p.nickname === SelfUser.nickname); // Use nickname instead of id
+  if (!player) {
+    console.warn("Current player not found in GameState");
+    return;
+  }
 
   const { position } = player.$;
   let { x, y } = position.value;
@@ -64,7 +68,7 @@ function HandleMove(e) {
   x: nextX,
   y: nextY,
 });
-    console.log(nextX, nextY);
+   console.log(`${SelfUser.nickname} moved to:`, nextX, nextY);
   } else {
     console.log("Blocked move to:", nextX, nextY);
   }
@@ -96,8 +100,11 @@ export const PlayGround = () => {
         ),
       players.map((player) => {
         const pos = player.$.position;
+        const isCurrentPlayer = player.nickname === SelfUser.nickname;
         return div({
-          class: "player",
+          class: `player ${isCurrentPlayer ? 'current-player' : 'other-player'}`,
+          'data-nickname': player.nickname,
+          title: player.nickname,
           style: ($) => {
             const { x, y } = $(pos);
             console.log("Render triggered", x, y);

@@ -65,17 +65,49 @@
   border-radius: 4px;
   z-index: 10;
   transition: transform 0.5s;
-  pointer-events: none;
+  pointer-events: auto; /* <-- Allow hovering */
   top: 0;
   left: 0;
 }
 
 
+.player::after {
+  content: attr(data-nickname);
+  position: absolute;
+  bottom: 100%; 
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.player:hover::after {
+  opacity: 1;
+}
+
+.current-player {
+  background-color: blue; 
+  border: 2px solid white;
+}
+
+.other-player {
+  background-color: red; 
+  border: 2px solid black;
+}
+
 .bomb {
   position: absolute;
   width: 42px;
   height: 42px;
-  background-image: url("../images/bomb.gif"); /* Make sure this path is correct */
+  background-image: url("../images/bomb.gif");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

@@ -19,7 +19,7 @@ export class Player extends User {
       type: "self_register",
       players: game.getPlayersList(),
       map: game.map,
-       position: this.position,
+      position: this.position,
     });
 
   }
