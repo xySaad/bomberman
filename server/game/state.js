@@ -73,20 +73,24 @@ export class Game {
       (p) => p.nickname.toLowerCase() === nickname.toLowerCase()
     );
   }
-  addPlayer(user, nickname) {
-    try {
-      const player = new Player.fromUser(user, nickname, this);
-      this.players.add(player);
-      this.broadcast({
-        position: player.position,
-        nickname: player.nickname,
-        type: "new_player",
+  createPlayer(user, nickname) {
+    if (this.hasNickname(nickname)) {
+      user.send({
+        type: "register_error",
+        reason: "Nickname already taken",
       });
-      this.updateCountdown();
-      return player;
-    } catch (error) {
       return null;
     }
+
+    const player = new Player(user.ws, nickname, this);
+    this.players.add(player);
+    this.broadcast({
+      position: player.position,
+      nickname: player.nickname,
+      type: "new_player",
+    });
+    this.updateCountdown();
+    return player;
   }
 
   deletePlayer(player) {

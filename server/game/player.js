@@ -7,10 +7,8 @@ export class Player extends User {
     return this.#nickname;
   }
   position = { x: 0, y: 0 };
-  #game = null;
   constructor(ws, nickname, game) {
     super(ws);
-    this.#game = game;
     this.#nickname = nickname;
     this.send({
       nickname: nickname,
@@ -20,16 +18,4 @@ export class Player extends User {
     });
     this.position = PLAYER_SPAWNS[game.players.size];
   }
-  static fromUser = class PlayerFromUser extends this {
-    constructor(user, nickname, game) {
-      if (game.hasNickname(nickname)) {
-        user.send({
-          type: "register_error",
-          reason: "Nickname already taken",
-        });
-        throw Error("Nickname already taken");
-      }
-      super(user.ws, nickname, game);
-    }
-  };
 }
