@@ -31,26 +31,14 @@ export class User {
       SelfUser.state = User.STATES.READY;
       router.navigate("/play");
     },
-   player_move: (data) => {
-      console.log("Player move received:", data);
+    player_move: (data) => {
       const player = GameState.players.value.find(p => p.nickname === data.nickname);
-      if (player) {
-        console.log(`Updating ${player.nickname} position to`, data.x, data.y);
-        player.$.position.value = { x: data.x, y: data.y };
-      } else {
-        console.warn("Player not found:", data.nickname);
-      }
+      if (player) player.position = { x: data.x, y: data.y };
     },
-
     bomb_placed: (data) => {
-      console.log("Bomb placed by:", data.nickname, "at", data.x, data.y);
       const { bombs } = GameState;
       const existingBomb = bombs.value.find(b => b.id === data.bombId);
-      if (existingBomb) {
-        console.log("Bomb already exists, skipping:", data.bombId);
-        return;
-      }
-
+      if (existingBomb) return;
       const newBomb = {
         x: data.x,
         y: data.y,
@@ -58,40 +46,20 @@ export class User {
         id: data.bombId,
         timestamp: Date.now()
       };
-
       bombs.value = [...bombs.value, newBomb];
-      console.log("Bomb added to GameState:", newBomb);
     },
-     bomb_exploded: (data) => {
-      console.log("Bomb exploded:", data.bombId);
+    bomb_exploded: (data) => {
       const { bombs, map } = GameState;
-
       const bombIndex = bombs.value.findIndex(b => b.id === data.bombId);
-      if (bombIndex === -1) {
-        console.warn("Bomb not found for explosion:", data.bombId);
-        return;
-      }
+      if (bombIndex === -1) return;
       bombs.value = bombs.value.filter(b => b.id !== data.bombId);
-
       if (data.destroyedBoxes && data.destroyedBoxes.length > 0) {
-        console.log("Destroying boxes:", data.destroyedBoxes);
         data.destroyedBoxes.forEach(box => {
           if (map[box.y] && map[box.y][box.x] === 2) {
             map[box.y][box.x] = 1;
           }
         });
-
         GameState.map = [...map];
-      }
-      if (data.explosionDirections) {
-        console.log("Explosion directions:", data.explosionDirections);
-        data.explosionDirections.forEach(dir => {
-          console.log(`Explosion ${dir.direction}:`, dir.cells);
-        });
-      }
-      
-      if (data.playerDisconnected) {
-        console.log("Bomb removed due to player disconnection");
       }
     }
 
