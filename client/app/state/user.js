@@ -31,16 +31,12 @@ export class User {
       SelfUser.state = User.STATES.READY;
       router.navigate("/play");
     },
-    player_move: (data) => {
-      console.log("moveee", data);
+   player_move: (data) => {
+      console.log("Player move received:", data);
       const player = GameState.players.value.find(p => p.nickname === data.nickname);
       if (player) {
-        if (player.nickname !== SelfUser.nickname) {
-          console.log(`Updat  ${player.nickname} to`, data.x, data.y);
-          player.$.position.value = { x: data.x, y: data.y };
-        } else {
-          console.log(`Ignoring position update for current user: ${player.nickname}`);
-        }
+        console.log(`Updating ${player.nickname} position to`, data.x, data.y);
+        player.$.position.value = { x: data.x, y: data.y };
       } else {
         console.warn("Player not found:", data.nickname);
       }
@@ -69,29 +65,24 @@ export class User {
      bomb_exploded: (data) => {
       console.log("Bomb exploded:", data.bombId);
       const { bombs, map } = GameState;
-      
-      // Remove the bomb from state
+
       const bombIndex = bombs.value.findIndex(b => b.id === data.bombId);
       if (bombIndex === -1) {
         console.warn("Bomb not found for explosion:", data.bombId);
         return;
       }
       bombs.value = bombs.value.filter(b => b.id !== data.bombId);
-      
-      // Update map with destroyed boxes
+
       if (data.destroyedBoxes && data.destroyedBoxes.length > 0) {
         console.log("Destroying boxes:", data.destroyedBoxes);
         data.destroyedBoxes.forEach(box => {
           if (map[box.y] && map[box.y][box.x] === 2) {
-            map[box.y][box.x] = 1; // Change box to ground
+            map[box.y][box.x] = 1;
           }
         });
-        
-        // Trigger a map update to refresh the UI
+
         GameState.map = [...map];
       }
-      
-      // Log explosion information
       if (data.explosionDirections) {
         console.log("Explosion directions:", data.explosionDirections);
         data.explosionDirections.forEach(dir => {

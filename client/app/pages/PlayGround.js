@@ -10,86 +10,40 @@ const getClass = {
   3: "unbreakable",
 };
 
-function canMoveTo(x, y) {
-  const { map } = GameState;
-  if (!map[y] || map[y][x] === undefined) return false;
-  return map[y][x] === 1;
-}
-
-function HandleMove(e) {
-  const { players } = GameState;
-
-  const player = players.value.find((p) => p.nickname === SelfUser.nickname); // Use nickname instead of id
-  if (!player) {
-    console.warn("Current player not found in GameState");
-    return;
+function HandleInput(e) {
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+    e.preventDefault();
   }
 
-  const { position } = player.$;
-  let { x, y } = position.value;
-
-  let nextX = x;
-  let nextY = y;
+  let inputType = null;
 
   switch (e.key) {
-
     case "ArrowUp":
-      nextY -= 1;
+      inputType = "ArrowUp";
       break;
     case "ArrowDown":
-      nextY += 1;
+      inputType = "ArrowDown";
       break;
     case "ArrowLeft":
-      nextX -= 1;
+      inputType = "ArrowLeft";
       break;
     case "ArrowRight":
-      nextX += 1;
+      inputType = "ArrowRight";
       break;
     case " ":
-      console.log("Booommmmm ");
-      const { bombs } = GameState;
-      const playerHasBomb = bombs.value.find(b => b.owner === SelfUser.nickname);
-      if (playerHasBomb) {
-        console.log("You already have a bomb placd!");
-        return;
-      }
-
-      const existingBomb = bombs.value.find(b => b.x === x && b.y === y);
-      if (existingBomb) {
-        console.log("Bomb alrady exist at this position");
-        return;
-      }
-      SelfUser.send({
-        type: "place_bomb",
-        x: x,
-        y: y
-      });
-
-      return;
-
+      inputType = "Space";
+      break;
     default:
       return;
   }
 
-  if (canMoveTo(nextX, nextY)) {
-    const { bombs } = GameState;
-    const bombAtDestination = bombs.value.find(b => b.x === nextX && b.y === nextY);
-    if (bombAtDestination) {
-      console.log("Cannot move to position with bomb:", nextX, nextY);
-      return;
-    }
-    player.$.position.value = { x: nextX, y: nextY };
-    SelfUser.send({
-      type: "player_move",
-      x: nextX,
-      y: nextY,
-    });
-    console.log(`${SelfUser.nickname} moved to:`, nextX, nextY);
-  } else {
-    console.log("Blocked move to:", nextX, nextY);
-  }
+  console.log("Sending input to server:", inputType);
+  SelfUser.send({
+    type: "player_input",
+    input: inputType
+  });
 }
-window.addEventListener("keyup", HandleMove);
+window.addEventListener("keyup", HandleInput);
 
 
 export const PlayGround = () => {
