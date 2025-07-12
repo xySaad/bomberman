@@ -1,12 +1,7 @@
 import { SelfUser } from "../app/state/user";
 
 export function HandleInput(e) {
-  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
-    e.preventDefault();
-  }
-
   let inputType = null;
-
   switch (e.key) {
     case "ArrowUp":
       inputType = "ArrowUp";
@@ -38,4 +33,3 @@ export const getClass = {
   2: "box",
   3: "unbreakable",
 };
-
