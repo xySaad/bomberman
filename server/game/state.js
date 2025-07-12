@@ -97,7 +97,9 @@ export class Game {
         x: bomb.x,
         y: bomb.y,
         owner: bomb.owner,
-        playerDisconnected: true
+        playerDisconnected: true,
+        explosionDirections: [],
+        destroyedBoxes: []
       });
     });
     this.players.delete(player);

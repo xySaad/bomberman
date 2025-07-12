@@ -66,19 +66,42 @@ export class User {
       bombs.value = [...bombs.value, newBomb];
       console.log("Bomb added to GameState:", newBomb);
     },
-    bomb_exploded: (data) => {
+     bomb_exploded: (data) => {
       console.log("Bomb exploded:", data.bombId);
-      const { bombs } = GameState;
-     const bombIndex = bombs.value.findIndex(b => b.id === data.bombId);
-    if (bombIndex === -1) {
-      console.warn("Bomb not found for explosion:", data.bombId);
-      return;
-    }
-     bombs.value = bombs.value.filter(b => b.id !== data.bombId);
-    
-    if (data.playerDisconnected) {
-      console.log("Bomb removed due to player disconnection");
-    }
+      const { bombs, map } = GameState;
+      
+      // Remove the bomb from state
+      const bombIndex = bombs.value.findIndex(b => b.id === data.bombId);
+      if (bombIndex === -1) {
+        console.warn("Bomb not found for explosion:", data.bombId);
+        return;
+      }
+      bombs.value = bombs.value.filter(b => b.id !== data.bombId);
+      
+      // Update map with destroyed boxes
+      if (data.destroyedBoxes && data.destroyedBoxes.length > 0) {
+        console.log("Destroying boxes:", data.destroyedBoxes);
+        data.destroyedBoxes.forEach(box => {
+          if (map[box.y] && map[box.y][box.x] === 2) {
+            map[box.y][box.x] = 1; // Change box to ground
+          }
+        });
+        
+        // Trigger a map update to refresh the UI
+        GameState.map = [...map];
+      }
+      
+      // Log explosion information
+      if (data.explosionDirections) {
+        console.log("Explosion directions:", data.explosionDirections);
+        data.explosionDirections.forEach(dir => {
+          console.log(`Explosion ${dir.direction}:`, dir.cells);
+        });
+      }
+      
+      if (data.playerDisconnected) {
+        console.log("Bomb removed due to player disconnection");
+      }
     }
 
   };

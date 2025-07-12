@@ -70,31 +70,40 @@ wss.on("connection", (ws) => {
         bombId: bombId
       });
 
-      bomb.timer = setTimeout(() => {
-    console.log(`Bomb ${bombId} exploded!`);
+     bomb.timer = setTimeout(() => {
+        console.log(`Bomb ${bombId} exploded!`);
 
-    const bombIndex = game.bombs.findIndex(b => b.id === bombId);
-    if (bombIndex !== -1) {
-      const explodedBomb = game.bombs[bombIndex];
-      explodedBomb.exploded = true; 
-      game.bombs.splice(bombIndex, 1);
+        const bombIndex = game.bombs.findIndex(b => b.id === bombId);
+        if (bombIndex !== -1) {
+          const explodedBomb = game.bombs[bombIndex];
+          explodedBomb.exploded = true; 
+          game.bombs.splice(bombIndex, 1);
 
-      player.hasBomb = false;
+          player.hasBomb = false;
 
-      game.broadcast({
-        type: "bomb_exploded",
-        bombId: bombId,
-        x: explodedBomb.x,
-        y: explodedBomb.y,
-        owner: explodedBomb.owner
-      });
-      
-      console.log(`Bomb ${bombId} explosion broadcasted to all players`);
-    } else {
-      console.warn(`Bomb ${bombId} not found during explosion`);
-    }
-    
-  }, 3000);
+          // Calculate explosion pattern
+          const explosionData = calculateExplosion(game.map, explodedBomb.x, explodedBomb.y);
+          
+          // Update the map by destroying boxes
+          explosionData.destroyedBoxes.forEach(box => {
+            game.map[box.y][box.x] = 1; // Change box to ground
+          });
+
+          game.broadcast({
+            type: "bomb_exploded",
+            bombId: bombId,
+            x: explodedBomb.x,
+            y: explodedBomb.y,
+            owner: explodedBomb.owner,
+            explosionDirections: explosionData.directions,
+            destroyedBoxes: explosionData.destroyedBoxes
+          });
+          
+        } else {
+          console.warn(`Bomb ${bombId} not found during explosion`);
+        }
+        
+      }, 3000);
 
       console.log(`Bomb ${bombId} placed and will explode in 4 seconds`);
     });
@@ -108,3 +117,65 @@ wss.on("connection", (ws) => {
 server.listen(PORT, () => {
   console.log(`🚀 Server running on ws://localhost:${PORT}`);
 });
+
+
+function calculateExplosion(map, bombX, bombY, explosionRange = 1) {
+  const directions = [];
+  const destroyedBoxes = [];
+  
+  // Define the four directions: up, down, left, right
+  const directionVectors = [
+    { dx: 0, dy: -1, name: 'up' },    // up
+    { dx: 0, dy: 1, name: 'down' },   // down
+    { dx: -1, dy: 0, name: 'left' },  // left
+    { dx: 1, dy: 0, name: 'right' }   // right
+  ];
+
+  directionVectors.forEach(direction => {
+    const explosionPath = [];
+    let canExplode = true;
+    
+    for (let i = 1; i <= explosionRange && canExplode; i++) {
+      const x = bombX + (direction.dx * i);
+      const y = bombY + (direction.dy * i);
+      
+      // Check if coordinates are within map bounds
+      if (y < 0 || y >= map.length || x < 0 || x >= map[0].length) {
+        canExplode = false;
+        break;
+      }
+      
+      const cellType = map[y][x];
+      
+      switch (cellType) {
+        case 0: // Wall - stop explosion
+        case 3: // Unbreakable - stop explosion
+          canExplode = false;
+          break;
+        case 1: // Ground - explosion continues
+          explosionPath.push({ x, y });
+          break;
+        case 2: // Box - destroy it and stop explosion
+          explosionPath.push({ x, y });
+          destroyedBoxes.push({ x, y });
+          canExplode = false;
+          break;
+        default:
+          canExplode = false;
+          break;
+      }
+    }
+    
+    if (explosionPath.length > 0) {
+      directions.push({
+        direction: direction.name,
+        cells: explosionPath
+      });
+    }
+  });
+
+  return {
+    directions,
+    destroyedBoxes
+  };
+}
