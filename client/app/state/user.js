@@ -46,26 +46,41 @@ export class User {
       }
     },
 
-   bomb_placed: (data) => {
+    bomb_placed: (data) => {
       console.log("Bomb placed by:", data.nickname, "at", data.x, data.y);
       const { bombs } = GameState;
+      const existingBomb = bombs.value.find(b => b.id === data.bombId);
+      if (existingBomb) {
+        console.log("Bomb already exists, skipping:", data.bombId);
+        return;
+      }
+
       const newBomb = {
         x: data.x,
         y: data.y,
         owner: data.nickname,
-        id: `${data.nickname}_${data.x}_${data.y}_${Date.now()}` 
+        id: data.bombId,
+        timestamp: Date.now()
       };
-      
+
       bombs.value = [...bombs.value, newBomb];
       console.log("Bomb added to GameState:", newBomb);
     },
     bomb_exploded: (data) => {
       console.log("Bomb exploded:", data.bombId);
       const { bombs } = GameState;
-      bombs.value = bombs.value.filter(b => b.id !== data.bombId);
-      console.log("Bomb removed from GameState");
+     const bombIndex = bombs.value.findIndex(b => b.id === data.bombId);
+    if (bombIndex === -1) {
+      console.warn("Bomb not found for explosion:", data.bombId);
+      return;
     }
-  
+     bombs.value = bombs.value.filter(b => b.id !== data.bombId);
+    
+    if (data.playerDisconnected) {
+      console.log("Bomb removed due to player disconnection");
+    }
+    }
+
   };
 
   static async new(serverUrl = "ws://localhost:3000") {

@@ -18,7 +18,7 @@ function canMoveTo(x, y) {
 
 function HandleMove(e) {
   const { players } = GameState;
-  
+
   const player = players.value.find((p) => p.nickname === SelfUser.nickname); // Use nickname instead of id
   if (!player) {
     console.warn("Current player not found in GameState");
@@ -64,7 +64,7 @@ function HandleMove(e) {
         x: x,
         y: y
       });
-      
+
       return;
 
     default:
@@ -72,13 +72,19 @@ function HandleMove(e) {
   }
 
   if (canMoveTo(nextX, nextY)) {
+    const { bombs } = GameState;
+    const bombAtDestination = bombs.value.find(b => b.x === nextX && b.y === nextY);
+    if (bombAtDestination) {
+      console.log("Cannot move to position with bomb:", nextX, nextY);
+      return;
+    }
     player.$.position.value = { x: nextX, y: nextY };
- SelfUser.send({
-  type: "player_move",
-  x: nextX,
-  y: nextY,
-});
-   console.log(`${SelfUser.nickname} moved to:`, nextX, nextY);
+    SelfUser.send({
+      type: "player_move",
+      x: nextX,
+      y: nextY,
+    });
+    console.log(`${SelfUser.nickname} moved to:`, nextX, nextY);
   } else {
     console.log("Blocked move to:", nextX, nextY);
   }
@@ -99,9 +105,9 @@ export const PlayGround = () => {
       div({ class: "playground-grid" }).add(
         ...map.flat().map((type) => div({ class: getClass[type] || "unknown" }))
       ),
-      (w, c) => c(() => w(bombs).length) && 
+      (w, c) => c(() => w(bombs).length) &&
         div({ class: "bombs-container" }).add(
-          ...w(bombs).map((bomb) => 
+          ...w(bombs).map((bomb) =>
             div({
               class: "bomb",
               'data-owner': bomb.owner,

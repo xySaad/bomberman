@@ -36,29 +36,29 @@ wss.on("connection", (ws) => {
     });
 
 
-  player.on("place_bomb", (data) => {
+    player.on("place_bomb", (data) => {
       console.log(`${player.nickname} wants to place bomb at ${data.x}, ${data.y}`);
 
       if (player.hasBomb) {
         console.log(`${player.nickname} already has a bomb placed`);
         return;
       }
-      
+
       const existingBomb = game.bombs.find(b => b.x === data.x && b.y === data.y);
       if (existingBomb) {
         console.log(`Bomb already exists at position ${data.x}, ${data.y}`);
         return;
       }
-      
-      const bombId = `${player.nickname}_${data.x}_${data.y}_${Date.now()}`;
+
+      const bombId = `bomb_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const bomb = {
         id: bombId,
         x: data.x,
         y: data.y,
         owner: player.nickname,
-        timer: null
+        timer: null,
+        exploded: false
       };
-      
       game.bombs.push(bomb);
       player.hasBomb = true;
 
@@ -71,23 +71,31 @@ wss.on("connection", (ws) => {
       });
 
       bomb.timer = setTimeout(() => {
-        console.log(`Bomb ${bombId} exploded!`);
-        const bombIndex = game.bombs.findIndex(b => b.id === bombId);
-        if (bombIndex !== -1) {
-          game.bombs.splice(bombIndex, 1);
-        }
-        
-        player.hasBomb = false;
-        
-        game.broadcast({
-          type: "bomb_exploded",
-          bombId: bombId,
-          x: data.x,
-          y: data.y
-        });
-        
-      }, 3000); 
+    console.log(`Bomb ${bombId} exploded!`);
+
+    const bombIndex = game.bombs.findIndex(b => b.id === bombId);
+    if (bombIndex !== -1) {
+      const explodedBomb = game.bombs[bombIndex];
+      explodedBomb.exploded = true; 
+      game.bombs.splice(bombIndex, 1);
+
+      player.hasBomb = false;
+
+      game.broadcast({
+        type: "bomb_exploded",
+        bombId: bombId,
+        x: explodedBomb.x,
+        y: explodedBomb.y,
+        owner: explodedBomb.owner
+      });
       
+      console.log(`Bomb ${bombId} explosion broadcasted to all players`);
+    } else {
+      console.warn(`Bomb ${bombId} not found during explosion`);
+    }
+    
+  }, 3000);
+
       console.log(`Bomb ${bombId} placed and will explode in 4 seconds`);
     });
 
