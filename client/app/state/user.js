@@ -35,8 +35,6 @@ export class User {
       console.log(data);      
       const palyer = GameState.players.value.find(p => p.nickname === data.nickname);
       if (palyer) palyer.position = { x: data.x, y: data.y };
-      // SelfUser.position={ x: data.x, y: data.y };
-      
     }
   };
 

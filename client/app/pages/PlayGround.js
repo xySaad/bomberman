@@ -2,7 +2,6 @@ import html from "rbind";
 import { GameState } from "../state/game";
 import { SelfUser, User } from "../state/user";
 import { App } from "../App";
-import { HandleKeys } from "../../utils/utils";
 const { div } = html;
 const getClass = {
   0: "wall",
@@ -30,7 +29,6 @@ export const PlayGround = () => {
           class: "player",
           style: ($) => {
             const { x, y } = $(pos);
-            console.log("Render triggered", x, y);
             return `transform: translate(${x * OFFSET}px, ${y * OFFSET}px);`;
           }
         });

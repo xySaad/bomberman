@@ -28,4 +28,9 @@ export class Player extends User {
       y: newy
     });
   }
+  canMoveTo(player, x, y) {
+    const game = player.game.map;
+    if (y < 0 || y >= game.length || x < 0 || x >= game[0].length) return false;
+    return game[y][x] === 1;
+  }
 }
