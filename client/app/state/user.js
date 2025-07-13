@@ -15,18 +15,9 @@ export class User {
   nickname = "";
   #socket = null;
   #events = {
-    new_player: (player) => {
-      GameState.players.push(player);
-      GameState.chatMessages.push({
-        alert: `${player.nickname} has joined the game`,
-      });
-    },
-    player_deleted: (player) => {
-      GameState.players.purge((p) => p.nickname === player.nickname);
-      GameState.chatMessages.push({
-        alert: `${player.nickname} has left the game`,
-      });
-    },
+    new_player: (player) => GameState.players.push(player),
+    player_deleted: (player) =>
+      GameState.players.purge((p) => p.nickname === player.nickname),
     chat: (msg) => {
       GameState.chatMessages.push({
         nickname: msg.nickname,
@@ -56,10 +47,17 @@ export class User {
       ws.onopen = () => resolve();
       ws.onclose = reject;
       ws.onerror = reject;
+      
       ws.onmessage = (ev) => {
         try {
           const msg = JSON.parse(ev.data);
           this.#events[msg.type]?.(msg);
+          if (msg.type === "alert") {            
+            GameState.chatMessages.push({
+              nickname: msg.nickname,
+              alert: msg.alert,
+            });
+          }
         } catch (err) {
           console.error(err);
           console.error("Invalid message:", ev.data);
@@ -86,9 +84,7 @@ export class User {
   }
 
   send(msg) {
-    if (SelfUser.state !== User.STATES.READY) {
-      this.#socket.send(JSON.stringify(msg));
-    }
+    this.#socket.send(JSON.stringify(msg));
   }
 
   on(event, handler) {

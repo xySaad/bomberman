@@ -81,13 +81,17 @@ export class Game {
       });
       return null;
     }
-
     const player = new Player(user.ws, nickname, this);
     this.players.add(player);
     this.broadcast({
       position: player.position,
       nickname: player.nickname,
       type: "new_player",
+    });
+    this.broadcast({
+      type: "alert",
+      nickname: player.nickname,
+      alert: `joined the game`,
     });
     this.updateCountdown();
     return player;
@@ -96,7 +100,11 @@ export class Game {
   deletePlayer(player) {
     this.players.delete(player);
     this.broadcast({ type: "player_deleted", nickname: player.nickname });
-
+    this.broadcast({
+      type: "alert",
+      nickname: player.nickname,
+      alert: `left the game`,
+    });
     if (this.phase === Game.PHASES.WAITING_PLAYERS) {
       if (this.players.size === 0) {
         this.#gamePool.deleteGame(this);
