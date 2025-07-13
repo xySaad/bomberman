@@ -20,7 +20,7 @@ export const Lobby = () => {
     div({ class: "Chat-Container" }).add(
       div({ class: "Chat-Messages" }).add(
         chatMessages.map((msg) =>
-          div({ class: `message ${msg.alert && "alert"}` }).add(
+          div({ class: `message${msg.alert ? " alert" : ""}` }).add(
             span({ class: "nickname", textContent: msg.nickname }),
             span({
               class: "text",
