@@ -51,13 +51,11 @@ export class User {
       ws.onmessage = (ev) => {
         try {
           const msg = JSON.parse(ev.data);
-          this.#events[msg.type]?.(msg);
-          if (msg.type === "alert") {            
+          this.#events[msg.type]?.(msg);  
             GameState.chatMessages.push({
               nickname: msg.nickname,
               alert: msg.alert,
             });
-          }
         } catch (err) {
           console.error(err);
           console.error("Invalid message:", ev.data);
