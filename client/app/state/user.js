@@ -15,9 +15,18 @@ export class User {
   nickname = "";
   #socket = null;
   #events = {
-    new_player: (player) => GameState.players.push(player),
-    player_deleted: (player) =>
-      GameState.players.purge((p) => p.nickname === player.nickname),
+    new_player: (player) => {
+      GameState.players.push(player);
+      GameState.chatMessages.push({
+        alert: `${player.nickname} has joined the game`,
+      });
+    },
+    player_deleted: (player) => {
+      GameState.players.purge((p) => p.nickname === player.nickname);
+      GameState.chatMessages.push({
+        alert: `${player.nickname} has left the game`,
+      });
+    },
     chat: (msg) => {
       GameState.chatMessages.push({
         nickname: msg.nickname,

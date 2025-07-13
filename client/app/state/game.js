@@ -3,6 +3,6 @@ export const GameState = {
   players: list([]),
   chatMessages: list([]),
   map: null,
-  counter: state(null),
+  counter: state(0),
   position: null,
 };

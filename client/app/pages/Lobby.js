@@ -14,17 +14,20 @@ export const Lobby = () => {
     p({ textContent: ($) => `Players in lobby: ${$(players).length}/4` }),
     p({
       textContent: ($) =>
-        console.log($(counter)) ||
-        "waiting for players" +
-          ($(counter) !== null ? `: ${counter.value}s` : ""),
+        "Waiting for players" +
+          ($(counter) ? `: ${counter.value}s` : ""),
     }),
     div({ class: "Chat-Container" }).add(
       div({ class: "Chat-Messages" }).add(
         chatMessages.map((msg) =>
-          div({ class: "message" }).add(
-            span({ class: "nickname", textContent: msg.nickname }),
-            span({ class: "text", textContent: `: ${msg.message}` })
-          )
+          msg.nickname
+            ? div({ class: "message" }).add(
+                span({ class: "nickname", textContent: msg.nickname }),
+                span({ class: "text", textContent: `: ${msg.message}` })
+              )
+            : div({ class: "message alert" }).add(
+                span({ class: "alert-text", textContent: msg.alert })
+              )
         )
       ),
       input({
