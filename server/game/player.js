@@ -7,6 +7,11 @@ export class Player extends User {
     return this.#nickname;
   }
   position = { x: 0, y: 0 };
+  // bombs = {
+  //   id,
+  //   maxallowed: 1,
+  //   bomb,
+  // }
   constructor(ws, nickname, game) {
     super(ws);
     this.#nickname = nickname;
@@ -17,5 +22,18 @@ export class Player extends User {
       map: game.map,
     });
     this.position = PLAYER_SPAWNS[game.players.size];
+    this.game = game
+  }
+  moveTo(newx, newy) {
+    
+    this.position = { x: newx, y: newy };
+    this.game.broadcast({
+      type: "player_move",
+      nickname: this.#nickname,
+      x: newx,
+      y: newy
+    });
+  
+    
   }
 }

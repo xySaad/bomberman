@@ -2,6 +2,7 @@ import html from "rbind";
 import { GameState } from "../state/game";
 import { SelfUser, User } from "../state/user";
 import { App } from "../App";
+import { HandleKeys } from "../../utils/utils";
 const { div } = html;
 const getClass = {
   0: "wall",
@@ -9,7 +10,7 @@ const getClass = {
   2: "box",
   3: "unbreakable",
 };
-
+window.addEventListener("keydown",HandleKeys)
 export const PlayGround = () => {
   if (SelfUser.state !== User.STATES.READY) return App();
 
@@ -27,10 +28,11 @@ export const PlayGround = () => {
         const pos = player.$.position;
         return div({
           class: "player",
-          style: ($) =>
-            `transform: translate(${$(pos).x * OFFSET}px, ${
-              $(pos).y * OFFSET
-            }px);`,
+          style: ($) => {
+            const { x, y } = $(pos);
+            console.log("Render triggered", x, y);
+            return `transform: translate(${x * OFFSET}px, ${y * OFFSET}px);`;
+          }
         });
       })
     )
