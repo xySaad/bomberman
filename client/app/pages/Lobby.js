@@ -25,7 +25,7 @@ export const Lobby = () => {
                 span({ class: "nickname", textContent: msg.nickname }),
                 span({ class: "text", textContent: `: ${msg.message}` })
               )
-            : div({ class: "message alert" }).add(
+            : div({ class: "message-alert" }).add(
                 span({ class: "alert-text", textContent: msg.alert })
               )
         )

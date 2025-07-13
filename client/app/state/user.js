@@ -86,7 +86,9 @@ export class User {
   }
 
   send(msg) {
-    this.#socket.send(JSON.stringify(msg));
+    if (SelfUser.state !== User.STATES.READY) {
+      this.#socket.send(JSON.stringify(msg));
+    }
   }
 
   on(event, handler) {
