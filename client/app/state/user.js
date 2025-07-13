@@ -22,6 +22,7 @@ export class User {
       GameState.chatMessages.push({
         nickname: msg.nickname,
         message: msg.message,
+        alert: msg.alert,
       });
     },
     counter: (msg) => {
@@ -47,17 +48,10 @@ export class User {
       ws.onopen = () => resolve();
       ws.onclose = reject;
       ws.onerror = reject;
-      
       ws.onmessage = (ev) => {
         try {
           const msg = JSON.parse(ev.data);
           this.#events[msg.type]?.(msg);
-          if (msg.type === "alert") {            
-            GameState.chatMessages.push({
-              nickname: msg.nickname,
-              alert: msg.alert,
-            });
-          }
         } catch (err) {
           console.error(err);
           console.error("Invalid message:", ev.data);

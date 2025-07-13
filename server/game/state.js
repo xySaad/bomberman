@@ -89,7 +89,7 @@ export class Game {
       type: "new_player",
     });
     this.broadcast({
-      type: "alert",
+      type: "chat",
       nickname: player.nickname,
       alert: `joined the game`,
     });
@@ -101,7 +101,7 @@ export class Game {
     this.players.delete(player);
     this.broadcast({ type: "player_deleted", nickname: player.nickname });
     this.broadcast({
-      type: "alert",
+      type: "chat",
       nickname: player.nickname,
       alert: `left the game`,
     });
