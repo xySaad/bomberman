@@ -9,7 +9,21 @@ const getClass = {
   2: "box",
   3: "unbreakable",
 };
-window.addEventListener("keydown",HandleKeys)
+const allowedKeys = [
+  "ArrowUp",
+  "ArrowDown",
+  "ArrowRight",
+  "ArrowLeft",
+  "Space",
+];
+onkeydown = ({ code }) => {
+  if (allowedKeys.includes(code)) {
+    SelfUser.send({
+      type: "player_input",
+      input: code,
+    });
+  }
+};
 export const PlayGround = () => {
   if (SelfUser.state !== User.STATES.READY) return App();
 
