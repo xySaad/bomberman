@@ -9,7 +9,21 @@ const getClass = {
   2: "box",
   3: "unbreakable",
 };
-
+const allowedKeys = [
+  "ArrowUp",
+  "ArrowDown",
+  "ArrowRight",
+  "ArrowLeft",
+  "Space",
+];
+onkeydown = ({ code }) => {
+  if (allowedKeys.includes(code)) {
+    SelfUser.send({
+      type: "player_input",
+      input: code,
+    });
+  }
+};
 export const PlayGround = () => {
   if (SelfUser.state !== User.STATES.READY) return App();
 
@@ -27,10 +41,10 @@ export const PlayGround = () => {
         const pos = player.$.position;
         return div({
           class: "player",
-          style: ($) =>
-            `transform: translate(${$(pos).x * OFFSET}px, ${
-              $(pos).y * OFFSET
-            }px);`,
+          style: ($) => {
+            const { x, y } = $(pos);
+            return `transform: translate(${x * OFFSET}px, ${y * OFFSET}px);`;
+          }
         });
       })
     )

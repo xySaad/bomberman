@@ -17,5 +17,20 @@ export class Player extends User {
       map: game.map,
     });
     this.position = PLAYER_SPAWNS[game.players.size];
+    this.game = game
+  }
+  moveTo(newx, newy) {
+    this.position = { x: newx, y: newy };
+    this.game.broadcast({
+      type: "player_move",
+      nickname: this.#nickname,
+      x: newx,
+      y: newy
+    });
+  }
+  canMoveTo(player, x, y) {
+    const game = player.game.map;
+    if (y < 0 || y >= game.length || x < 0 || x >= game[0].length) return false;
+    return game[y][x] === 1;
   }
 }

@@ -23,6 +23,9 @@ wss.on("connection", (ws) => {
         message: data.message,
       });
     });
+    player.on("player_input", (data) => {
+       gamePool.handleInput(player, data.input);
+    });
   });
 
   console.log("New connection");
