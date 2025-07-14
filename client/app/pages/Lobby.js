@@ -8,22 +8,24 @@ export const Lobby = () => {
   if (SelfUser.state !== User.STATES.REGISTERED) return App();
   const { players, chatMessages, counter } = GameState;
   const message = state("");
-
+  
   return div({ class: "Lobby" }).add(
     h2({ textContent: `Hello ${SelfUser.nickname}` }),
     p({ textContent: ($) => `Players in lobby: ${$(players).length}/4` }),
     p({
       textContent: ($) =>
-        console.log($(counter)) ||
-        "waiting for players" +
-          ($(counter) !== null ? `: ${counter.value}s` : ""),
+        "Waiting for players" +
+        ($(counter) !== null ? `: ${counter.value}s` : ""),
     }),
     div({ class: "Chat-Container" }).add(
       div({ class: "Chat-Messages" }).add(
         chatMessages.map((msg) =>
-          div({ class: "message" }).add(
+          div({ class: `message${msg.alert ? " alert" : ""}` }).add(
             span({ class: "nickname", textContent: msg.nickname }),
-            span({ class: "text", textContent: `: ${msg.message}` })
+            span({
+              class: "text",
+              textContent: msg.alert || `: ${msg.message}`,
+            })
           )
         )
       ),

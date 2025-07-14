@@ -22,6 +22,7 @@ export class User {
       GameState.chatMessages.push({
         nickname: msg.nickname,
         message: msg.message,
+        alert: msg.alert,
       });
     },
     counter: (msg) => {
