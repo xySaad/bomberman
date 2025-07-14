@@ -53,19 +53,3 @@
   background-color: #666;
   background-image: url("./unbreakable.png"); /* Optional image */
 }
-
-.player {
-  position: absolute;
-  width: 42px;
-  height: 42px;
-  background-image: url("../images/player.png");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  border-radius: 4px;
-  z-index: 10;
-  transition: transform 0.15s;
-  pointer-events: none;
-  top: 0;
-  left: 0;
-}
