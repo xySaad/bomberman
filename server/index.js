@@ -24,7 +24,7 @@ wss.on("connection", (ws) => {
       });
     });
     player.on("player_input", (data) => {
-       gamePool.handleInput(player, data.input);
+      player.handleInput(data.input);
     });
   });
 

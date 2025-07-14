@@ -1,0 +1,15 @@
+.player {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  background-image: url("../images/player.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 4px;
+  z-index: 10;
+  transition: transform 300ms;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+}
