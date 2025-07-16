@@ -22,7 +22,7 @@ onkeydown = ({ code }) => {
 export const PlayGround = () => {
   if (SelfUser.state !== User.STATES.READY) return App();
 
-  const { players, map, bombs, powerUps } = GameState;
+  const { players, map, bombs, powerUps, explosions } = GameState;
   const TILE_SIZE = 42;
   const GAP = 2;
   const OFFSET = TILE_SIZE + GAP;
@@ -42,6 +42,12 @@ export const PlayGround = () => {
             const { x, y } = $(pos);
             return `transform: translate(${x * OFFSET}px, ${y * OFFSET}px);`;
           },
+        });
+      }),
+      explosions.map((e) => {
+        return div({
+          class: "explosion",
+          style: `transform: translate(${e.x * OFFSET}px, ${e.y * OFFSET}px);`
         });
       }),
       powerUps.map((powerUp) => {

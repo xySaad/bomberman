@@ -179,7 +179,7 @@ export class Game {
         if (tileType === 2) {
           //  tile kichnaga ms flfront not yet 
           this.setTileType(nx, ny, 1);
-          if (Math.random() < 1.0) { // 100% chance for now hh
+          if (Math.random() < 0.7) { // 100% chance for now hh
             this.spawnPowerUp(nx, ny, 'bombpowerup');
           }
           break;
@@ -232,18 +232,18 @@ export class Game {
     }
   }
 
-  spawnPowerUp(x, y, type = 'bombpowerup') {
+  spawnPowerUp(x, y, type = 'bomb') {
     const powerUp = {
       id: this.getNextPowerUpId(),
       position: { x, y },
-      type: type,
+      type,
       spawned: Date.now()
     };
 
     this.powerUps.push(powerUp);
     this.broadcast({
       type: "power_up_spawned",
-      powerUp: powerUp
+      powerUp
     });
 
     return powerUp;

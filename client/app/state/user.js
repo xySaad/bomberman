@@ -48,14 +48,12 @@ export class User {
       });
     },
     bomb_exploded: (data) => {
-      console.log(data);
-
       GameState.bombs.purge((b) => b.id === data.id);
-      GameState.explosions.purge(() => true);
       for (const pos of data.positions) {
-        GameState.explosions.push(pos);
+        const [idx] = GameState.explosions.push(pos);
+        setTimeout(() => GameState.explosions.remove(idx()), 500)
         GameState.map[pos.y].value[pos.x].type = 1; // Convert box to ground
-      } 
+      }
     },
     power_up_spawned: (data) => {
       console.log(data.powerUp);
