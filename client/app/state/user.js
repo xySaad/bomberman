@@ -1,4 +1,5 @@
-import { router } from "rbind";
+
+import { router, list } from "rbind";
 import { GameState } from "./game";
 
 export class User {
@@ -14,7 +15,7 @@ export class User {
   state = User.STATES.INIT;
   nickname = "";
   #socket = null;
-   #bombTimeouts = new Map();
+  #bombTimeouts = new Map();
   #events = {
     new_player: (player) => GameState.players.push(player),
     player_deleted: (player) =>
@@ -42,27 +43,22 @@ export class User {
       GameState.bombs.push({
         id: data.bomb.id,
         position: data.bomb.position,
-       timeToExplode: data.bomb.timeToExplode,
+        timeToExplode: data.bomb.timeToExplode,
         timeOfExplosion: data.bomb.timeOfExplosion,
       });
     },
-   bomb_exploded: (data) => {
+    bomb_exploded: (data) => {
       console.log(data);
 
       GameState.bombs.purge((b) => b.id === data.id);
       GameState.explosions.purge(() => true);
-     for (const pos of data.positions) {
+      for (const pos of data.positions) {
         GameState.explosions.push(pos);
-//i tried with ai to update the tile but failed
-        if (GameState.map[pos.y] && GameState.map[pos.y][pos.x]) {
-          if (GameState.map[pos.y][pos.x].type === 2) {
-            GameState.map[pos.y][pos.x].type = 1; // Convert box to ground
-          }
-        }
-      }
+        GameState.map[pos.y].value[pos.x].type = 1; // Convert box to ground
+      } 
     },
-     power_up_spawned: (data) => {
-      console.log( data.powerUp);
+    power_up_spawned: (data) => {
+      console.log(data.powerUp);
       GameState.powerUps.push({
         id: data.powerUp.id,
         position: data.powerUp.position,
@@ -70,7 +66,7 @@ export class User {
         spawned: data.powerUp.spawned
       });
     },
-     power_up_removed: (data) => {
+    power_up_removed: (data) => {
       console.log("remove ", data.powerUpId);
       GameState.powerUps.purge((p) => p.id === data.powerUpId);
     },
@@ -78,7 +74,7 @@ export class User {
     // power_up_collected: (data) => {
     //   if (data.nickname === SelfUser.nickname) {
     //     const currentStats = GameState.playerStats.value;
-        
+
     //     switch (data.powerUpType) {
     //       case 'bombpowerup':
     //         GameState.playerStats.value = {
@@ -137,7 +133,11 @@ export class User {
         this.state = User.STATES.REGISTERED;
         this.nickname = msg.nickname;
         GameState.players.push(...msg.players);
-        GameState.map = msg.map;
+        // GameState.map = msg.map;
+        msg.map.forEach(row => {
+          GameState.map.push(list([]))
+          GameState.map[GameState.map.length - 1].push(...row)
+        });
         GameState.position = msg.position;
         resolve();
       });
