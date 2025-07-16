@@ -14,6 +14,7 @@ export class User {
   state = User.STATES.INIT;
   nickname = "";
   #socket = null;
+   #bombTimeouts = new Map();
   #events = {
     new_player: (player) => GameState.players.push(player),
     player_deleted: (player) =>
@@ -32,14 +33,79 @@ export class User {
       SelfUser.state = User.STATES.READY;
       router.navigate("/play");
     },
-    player_move:(data)=>{
-      console.log(data);      
+    player_move: (data) => {
+      console.log(data);
       const palyer = GameState.players.value.find(p => p.nickname === data.nickname);
       if (palyer) palyer.position = { x: data.x, y: data.y };
-    }
+    },
+    bomb_placed: (data) => {
+      GameState.bombs.push({
+        id: data.bomb.id,
+        position: data.bomb.position,
+       timeToExplode: data.bomb.timeToExplode,
+        timeOfExplosion: data.bomb.timeOfExplosion,
+      });
+    },
+   bomb_exploded: (data) => {
+      console.log(data);
+
+      GameState.bombs.purge((b) => b.id === data.id);
+      GameState.explosions.purge(() => true);
+     for (const pos of data.positions) {
+        GameState.explosions.push(pos);
+//i tried with ai to update the tile but failed
+        if (GameState.map[pos.y] && GameState.map[pos.y][pos.x]) {
+          if (GameState.map[pos.y][pos.x].type === 2) {
+            GameState.map[pos.y][pos.x].type = 1; // Convert box to ground
+          }
+        }
+      }
+    },
+     power_up_spawned: (data) => {
+      console.log( data.powerUp);
+      GameState.powerUps.push({
+        id: data.powerUp.id,
+        position: data.powerUp.position,
+        type: data.powerUp.type,
+        spawned: data.powerUp.spawned
+      });
+    },
+     power_up_removed: (data) => {
+      console.log("remove ", data.powerUpId);
+      GameState.powerUps.purge((p) => p.id === data.powerUpId);
+    },
+    // mabghatch tupdati lui 
+    // power_up_collected: (data) => {
+    //   if (data.nickname === SelfUser.nickname) {
+    //     const currentStats = GameState.playerStats.value;
+        
+    //     switch (data.powerUpType) {
+    //       case 'bombpowerup':
+    //         GameState.playerStats.value = {
+    //           ...currentStats,
+    //           maxBombs: data.newMaxBombs || currentStats.maxBombs + 1
+    //         };
+    //         break;
+
+    //       // case 'speedpowerup':
+    //       //   GameState.playerStats.value = {
+    //       //     ...currentStats,
+    //       //     speed: currentStats.speed + 1
+    //       //   };
+    //       //   break;
+    //       // case 'radiuspowerup':
+    //       //   GameState.playerStats.value = {
+    //       //     ...currentStats,
+    //       //     bombRadius: currentStats.bombRadius + 1
+    //       //   };
+    //       //   break;
+    //     }
+    //   }
+
+    // },
   };
 
-  static async new(serverUrl = "ws://localhost:3000") {
+  static async new(serverUrl = `ws://${location.hostname}:3000`) {
     const user = new this();
     await user.#connectSocket(serverUrl);
     user.state = this.STATES.CONNECTED;

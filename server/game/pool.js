@@ -2,6 +2,8 @@ import { Game } from "./state.js";
 
 export class GamePool {
   #games = [new Game(this)];
+ 
+  
   deleteGame(game) {
     this.#games.splice(this.#games.indexOf(game), 1);
   }
@@ -14,4 +16,5 @@ export class GamePool {
     this.#games.push(newGame);
     return newGame;
   }
+ 
 }

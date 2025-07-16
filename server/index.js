@@ -31,6 +31,6 @@ wss.on("connection", (ws) => {
   console.log("New connection");
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on ws://localhost:${PORT}`);
 });

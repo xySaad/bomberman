@@ -2,13 +2,13 @@ import html from "rbind";
 import { GameState } from "../state/game";
 import { SelfUser, User } from "../state/user";
 import { App } from "../App";
-const { div } = html;
-const getClass = {
-  0: "wall",
-  1: "ground",
-  2: "box",
-  3: "unbreakable",
-};
+const { div ,span} = html;
+const getClass = [
+   "wall",
+   "ground",
+  "box",
+   "unbreakable",
+]
 const allowedKeys = [
   "ArrowUp",
   "ArrowDown",
@@ -27,16 +27,37 @@ onkeydown = ({ code }) => {
 export const PlayGround = () => {
   if (SelfUser.state !== User.STATES.READY) return App();
 
-  const { players, map } = GameState;
+  const { players, map,bombs,powerUps } = GameState;
   const TILE_SIZE = 42;
   const GAP = 2;
   const OFFSET = TILE_SIZE + GAP;
 
   return div({ class: "playground" }).add(
+   
     div({ class: "grid-wrapper" }).add(
       div({ class: "playground-grid" }).add(
-        ...map.flat().map((type) => div({ class: getClass[type] || "unknown" }))
+        ...map.flat().map((tile) => div({ class: getClass[tile.type] || "unknown" }))
       ),
+      bombs.map((bomb) => {
+        const pos= bomb.$.position;        
+        return div({
+          class: "bomb",
+          style: ($) => {
+            const { x, y } = $(pos);
+            return `transform: translate(${x * OFFSET}px, ${y * OFFSET}px);`;
+          }
+        });
+      }),
+       powerUps.map((powerUp) => {
+        const pos = powerUp.$.position;
+        return div({
+          class: "bombpowerup",
+          style: ($) => {
+            const { x, y } = $(pos);            
+            return `transform: translate(${x * OFFSET}px, ${y * OFFSET}px);`;
+          }
+        });
+      }),
       players.map((player) => {
         const pos = player.$.position;
         return div({
@@ -47,6 +68,34 @@ export const PlayGround = () => {
           }
         });
       })
-    )
+    ),
+    //  StatsDisplay()
   );
 };
+
+
+
+
+// const StatsDisplay = () => {
+//   const stats = GameState.playerStats;
+//   console.log(stats.maxBombs);
+  
+//   return div({ class: "stats-display" }).add(
+//     div({ class: "stat-item" }).add(
+//       span({ class: "stat-label" }, "💣 Bombs: "),
+//       span({ class: "stat-value" }, ($) => $(stats).maxBombs)
+//     ),
+//     div({ class: "stat-item" }).add(
+//       span({ class: "stat-label" }, "❤️ Health: "),
+//       span({ class: "stat-value" }, ($) => $(stats).health)
+//     ),
+//     div({ class: "stat-item" }).add(
+//       span({ class: "stat-label" }, "⚡ Speed: "),
+//       span({ class: "stat-value" }, ($) => $(stats).speed)
+//     ),
+//     div({ class: "stat-item" }).add(
+//       span({ class: "stat-label" }, "💥 Radius: "),
+//       span({ class: "stat-value" }, ($) => $(stats).bombRadius)
+//     )
+//   );
+// };
