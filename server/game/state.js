@@ -181,6 +181,8 @@ export class Game {
           this.setTileType(nx, ny, 1);
           if (Math.random() < 0.7) { // 100% chance for now hh
             this.spawnPowerUp(nx, ny, 'bombpowerup');
+          }else{
+            this.spawnPowerUp(nx, ny, 'radiusup');
           }
           break;
         }
@@ -232,7 +234,7 @@ export class Game {
     }
   }
 
-  spawnPowerUp(x, y, type = 'bomb') {
+  spawnPowerUp(x, y, type) {
     const powerUp = {
       id: this.getNextPowerUpId(),
       position: { x, y },
@@ -267,13 +269,13 @@ export class Game {
   collectPowerUp(player, powerUpId) {
     const powerUp = this.powerUps.find(p => p.id === powerUpId);
     if (!powerUp) return false;
-
-
     switch (powerUp.type) {
       case 'bombpowerup':
         player.maxBombs++;
         break;
-      // power ups lokhrin 
+      case 'radiusup':
+        player.bombRadius++
+        break
     }
 
     this.removePowerUp(powerUpId);

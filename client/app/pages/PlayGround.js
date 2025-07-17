@@ -52,8 +52,12 @@ export const PlayGround = () => {
       }),
       powerUps.map((powerUp) => {
         const pos = powerUp.$.position;
+        console.log(powerUp);
+          const type = powerUp.$.type.value;
+          console.log(type);
+          
         return div({
-          class: "bombpowerup",
+         class: `powerup ${type}`,
           style: ($) => {
             const { x, y } = $(pos);
             return `transform: translate(${x * OFFSET}px, ${y * OFFSET}px);`;
