@@ -1,5 +1,8 @@
 .playground {
   position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 80px; /* Push the whole playground down so the stats can appear above */
 }
 
 .grid-wrapper {
@@ -52,4 +55,35 @@
 .unbreakable {
   background-color: #666;
   background-image: url("./unbreakable.png"); /* Optional image */
+}
+
+
+.stats-display {
+  position: absolute;
+  top: -60px; /* Adjust depending on how much space you want above the grid */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  padding: 8px 16px;
+  /* background: rgba(0, 0, 0, 0.7); */
+  border-radius: 12px;
+  color: #fff;
+  font-size: 16px;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+.stat-item {
+  display: flex;
+  gap: 5px;
+}
+
+.stat-label {
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+.stat-value {
+  color: #ffffff;
 }

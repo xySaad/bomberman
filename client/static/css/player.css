@@ -13,3 +13,70 @@
   top: 0;
   left: 0;
 }
+
+.bomb {
+  position: absolute; 
+  width: 42px;
+  height: 42px;
+  background-image: url("../images/bomb.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 5; 
+  transition: transform 0.15s;  
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.explosion {
+  position: absolute; 
+  width: 42px;
+  height: 42px;
+  background-image: url("../images/explosion.gif");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 10; 
+  transition: transform 0.15s;  
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+
+
+
+
+
+.bombpowerup {
+ position: absolute; 
+  width: 42px;
+  height: 42px;
+  background-image: url("../images/bombpowerup.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 6; 
+
+  transition: transform 0.3s ease;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+   box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+
+
+/* .bombpowerup {
+  animation: powerUpFloat 2s ease-in-out infinite;
+} */
+
+/* @keyframes powerUpFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+} */

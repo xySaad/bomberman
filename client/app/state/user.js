@@ -1,4 +1,4 @@
-import { router } from "rbind";
+import { router, list } from "rbind";
 import { GameState } from "./game";
 
 export class User {
@@ -32,14 +32,45 @@ export class User {
       SelfUser.state = User.STATES.READY;
       router.navigate("/play");
     },
-    player_move:(data)=>{
-      console.log(data);      
-      const palyer = GameState.players.value.find(p => p.nickname === data.nickname);
+    player_move: (data) => {
+      console.log(data);
+      const palyer = GameState.players.value.find(
+        (p) => p.nickname === data.nickname
+      );
       if (palyer) palyer.position = { x: data.x, y: data.y };
-    }
+    },
+    bomb_placed: (data) => {
+      GameState.bombs.push({
+        id: data.bomb.id,
+        position: data.bomb.position,
+        timeToExplode: data.bomb.timeToExplode,
+        timeOfExplosion: data.bomb.timeOfExplosion,
+      });
+    },
+    bomb_exploded: (data) => {
+      GameState.bombs.purge((b) => b.id === data.id);
+      for (const pos of data.positions) {
+        const [idx] = GameState.explosions.push(pos);
+        setTimeout(() => GameState.explosions.remove(idx()), 500);
+        GameState.map[pos.y].value[pos.x].type = 1; // Convert box to ground
+      }
+    },
+    power_up_spawned: (data) => {
+      console.log(data.powerUp);
+      GameState.powerUps.push({
+        id: data.powerUp.id,
+        position: data.powerUp.position,
+        type: data.powerUp.type,
+        spawned: data.powerUp.spawned,
+      });
+    },
+    power_up_removed: (data) => {
+      console.log("remove ", data.powerUpId);
+      GameState.powerUps.purge((p) => p.id === data.powerUpId);
+    },
   };
 
-  static async new(serverUrl = "ws://localhost:3000") {
+  static async new(serverUrl = `ws://${location.hostname}:3000`) {
     const user = new this();
     await user.#connectSocket(serverUrl);
     user.state = this.STATES.CONNECTED;
@@ -71,7 +102,7 @@ export class User {
         this.state = User.STATES.REGISTERED;
         this.nickname = msg.nickname;
         GameState.players.push(...msg.players);
-        GameState.map = msg.map;
+        GameState.map = msg.map.map((row) => list(row));
         GameState.position = msg.position;
         resolve();
       });

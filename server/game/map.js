@@ -20,15 +20,20 @@ export class GameMap {
     for (let y = 0; y < this.height; y++) {
       const row = [];
       for (let x = 0; x < this.width; x++) {
+        let tileType;
         if (x === 0 || y === 0 || x === this.width - 1 || y === this.height - 1) {
-          row.push(0); // Wall
+          tileType = 0; // Wall
         } else if (this.isCorner(x, y)) {
-          row.push(1); // Spawn ground
+          tileType = 1; // Spawn ground
         } else if (x % 2 === 0 && y % 2 === 0) {
-          row.push(3); // Unbreakable
+          tileType = 3; // Unbreakable
         } else {
-          row.push(Math.random() < 0.7 ? 2 : 1); // 70% box, 30% ground
+          tileType = Math.random() < 0.7 ? 2 : 1; // 70% box, 30% ground
         }
+        row.push({
+          type: tileType,
+          hasBomb: false
+        });
       }
       map.push(row);
     }
