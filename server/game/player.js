@@ -7,6 +7,11 @@ export class Player extends User {
   #game = null;
   #speed = 0.2; // 0.2 per 100ms
   #throttledMoveTo = throttle(100, (...args) => this.moveTo(...args));
+  maxBombs = 1;
+  health = 3;
+  speed = 1;
+  bombRadius = 1;
+  bombs = 0;
   get nickname() {
     return this.#nickname;
   }
@@ -34,6 +39,10 @@ export class Player extends User {
     }[input];
   }
   handleInput(input) {
+    if (input === "Space") {
+      this.placeBomb();
+      return;
+    }
     const nextPosition = this.nextPosition(input);
     if (!nextPosition) return;
     const canMove = this.canMoveTo(...nextPosition);
@@ -42,6 +51,10 @@ export class Player extends User {
     }
   }
   moveTo(x, y) {
+    const powerUp = this.#game.getPowerUpAt(x, y);
+    if (powerUp) {
+      this.#game.collectPowerUp(this, powerUp.id);
+    }
     this.#game.broadcast({
       type: "player_move",
       nickname: this.#nickname,
@@ -56,7 +69,19 @@ export class Player extends User {
     // check if he can move to that block
     const { map } = this.#game;
     if (y < 0 || y >= map.length || x < 0 || x >= map[0].length) return false;
-    if (map[y][x] !== 1) return false;
+
+    if (this.#game.getTileType(x, y) !== 1) return false;
+    if (this.#game.tileHasBomb(x, y)) return false;
     return true;
+  }
+  async placeBomb() {
+    if (this.bombs >= this.maxBombs) return false;
+    const { x, y } = this.position;
+    const [added, untilExplode] = this.#game.addBomb(x, y, this.bombRadius);
+    if (added) {
+      this.bombs++;
+      await untilExplode;
+      this.bombs--;
+    }
   }
 }
