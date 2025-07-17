@@ -175,19 +175,18 @@ export class Game {
         }
 
         explodedTiles.push({ x: nx, y: ny });
-
         if (tileType === 2) {
-          //  tile kichnaga ms flfront not yet 
           this.setTileType(nx, ny, 1);
-          if (Math.random() < 0.7) { // 100% chance for now hh
+          if (Math.random() < 0.5) { 
             this.spawnPowerUp(nx, ny, 'bombpowerup');
-          }else{
+          } else {
             this.spawnPowerUp(nx, ny, 'radiusup');
           }
           break;
         }
       }
     }
+    this.damage(explodedTiles);
     this.removeBomb(bombId);
     this.broadcast({
       type: "bomb_exploded",
@@ -277,9 +276,37 @@ export class Game {
         player.bombRadius++
         break
     }
-
     this.removePowerUp(powerUpId);
-
     return true;
+  }
+  damage(explodedTiles) {
+    for (const player of this.#players) {
+      if (player.isDead) continue;
+      const playerHit = explodedTiles.some(tile =>
+        tile.x === player.position.x && tile.y === player.position.y
+      );
+      if (playerHit) {
+        player.takeDamage();
+        this.broadcast({
+          type: "player_damaged",
+          nickname: player.nickname,
+          health: player.health,
+          isDead: player.isDead
+        });
+        if (player.isDead) {
+          this.checkGameEnd();
+        }
+      }
+    }
+  }
+  checkGameEnd() {
+    const alivePlayers = Array.from(this.#players).filter(p => !p.isDead);
+    if (alivePlayers.length === 1) {
+      this.#phase = Game.PHASES.ENDED;
+      this.broadcast({
+        type: "game_ended",
+        winner: alivePlayers[0].nickname
+      });
+    }
   }
 }

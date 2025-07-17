@@ -11,6 +11,7 @@ export class Player extends User {
   speed = 1;
   bombRadius = 1;
   bombs = 0
+  isDead = false;
   get nickname() {
     return this.#nickname;
   }
@@ -27,7 +28,14 @@ export class Player extends User {
     this.position = PLAYER_SPAWNS[game.players.size];
     this.#game = game;
   }
-
+ takeDamage() {
+    if (this.isDead) return;
+    this.health -= 1;
+    if (this.health <= 0) {
+      this.health = 0;
+      this.isDead = true;
+    }
+  }
   nextPosition(input) {
     const { x, y } = this.position;
     return {
@@ -39,6 +47,7 @@ export class Player extends User {
     }[input];
   }
   handleInput(input) {
+    if (this.isDead) return;
     if (input === "Space") {
       this.placeBomb();
       return;
