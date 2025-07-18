@@ -28,12 +28,19 @@ export class Player extends User {
     this.position = PLAYER_SPAWNS[game.players.size];
     this.#game = game;
   }
- takeDamage() {
-    if (this.isDead) return;
+  destroy() {
+    super.destroy()
+    this.#game.deletePlayer(this)
+    this.#game.checkGameEnd();
+  }
+  takeDamage() {
     this.health -= 1;
-    if (this.health <= 0) {
+    if (this.health < 1) {
       this.health = 0;
+      this.on("player_input", null)
       this.isDead = true;
+      this.#game.broadcast({ type: "player_deleted", nickname: this.nickname });
+      this.#game.checkGameEnd();
     }
   }
   nextPosition(input) {
@@ -47,7 +54,6 @@ export class Player extends User {
     }[input];
   }
   handleInput(input) {
-    if (this.isDead) return;
     if (input === "Space") {
       this.placeBomb();
       return;
