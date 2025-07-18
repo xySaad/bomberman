@@ -13,5 +13,7 @@ export const GameState = {
     health: 3,
     speed: 1,
     bombRadius: 1
-  })
+  }),
+   gameEnded: state(false),
+  gameWinner: state(null)
 };

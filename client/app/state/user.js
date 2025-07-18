@@ -32,8 +32,30 @@ export class User {
       SelfUser.state = User.STATES.READY;
       router.navigate("/play");
     },
+    game_ended: (msg) => {
+      GameState.gameWinner.value = msg.winner;
+      GameState.gameEnded.value = true;
+      // console.log(GameState.gameWinner,GameState.gameEnded);
+    },
+    player_damaged: (data) => {
+      const player = GameState.players.value.find(
+        (p) => p.nickname === data.nickname
+      );
+      if (player) {
+        player.health = data.health;
+        player.isDead = data.isDead;
+      }
+      if (data.nickname === SelfUser.nickname) {
+        GameState.playerStats.value = {
+          ...GameState.playerStats.value,
+          health: data.health,
+        };
+        if (data.isDead) {
+          SelfUser.state = User.STATES.ELIMINATED;
+        }
+      }
+    },
     player_move: (data) => {
-      console.log(data);
       const palyer = GameState.players.value.find(
         (p) => p.nickname === data.nickname
       );
@@ -56,7 +78,6 @@ export class User {
       }
     },
     power_up_spawned: (data) => {
-      console.log(data.powerUp);
       GameState.powerUps.push({
         id: data.powerUp.id,
         position: data.powerUp.position,
@@ -65,7 +86,6 @@ export class User {
       });
     },
     power_up_removed: (data) => {
-      console.log("remove ", data.powerUpId);
       GameState.powerUps.purge((p) => p.id === data.powerUpId);
     },
   };
