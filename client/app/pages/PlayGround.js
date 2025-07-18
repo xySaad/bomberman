@@ -21,12 +21,6 @@ onkeydown = ({ code }) => {
 };
 
 export const PlayGround = () => {
-  return div().add(($) => {
-    if ($(GameState.gameEnded)) return GameEndedScreen();
-    return playGroundContent();
-  });
-}
- const playGroundContent = () => {
   if (SelfUser.state !== User.STATES.READY) return App();
 
   const { players, map, bombs, powerUps, explosions } = GameState;
@@ -35,6 +29,7 @@ export const PlayGround = () => {
   const OFFSET = TILE_SIZE + GAP;
 
   return div({ class: "playground" }).add(
+    GameEndedScreen(),
     div({ class: "grid-wrapper" }).add(
       div({ class: "playground-grid" }).add(
         ...map.map((row) =>
@@ -110,21 +105,15 @@ const StatsDisplay = () => {
 };
 
 const GameEndedScreen = () => {
-  return div({ class: "game-end-screen" }).add(
+  return div({ class: "game-end-screen", "data-game-ended": ($) => $(GameState.gameEnded) }).add(
     div({ class: "game-end-content" }).add(
       div({
         class: "game-end-title",
-        textContent: ($) =>
-          $(GameState.gameWinner)
-            ? `${$(GameState.gameWinner)} Wins!`
-            : "Game Draw!"
+        textContent: ($) => `${$(GameState.gameWinner)} Won! 🏆`
       }),
       div({
         class: "game-end-subtitle",
-        textContent: () =>
-          SelfUser.state === User.STATES.ELIMINATED
-            ? "You were eliminated"
-            : "Game Over"
+        textContent: "Game Over"
       })
     )
   );

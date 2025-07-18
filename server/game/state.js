@@ -58,6 +58,11 @@ export class Game {
         await this.lobbyCounter.start(10);
         this.#phase = Game.PHASES.STARTED;
         this.broadcast({ type: "game_started" });
+        for (const player of this.#players) {
+          player.on("player_input", (data) => {
+            player.handleInput(data.input);
+          });
+        }
       } catch (error) {
         console.error(error);
       }
@@ -119,8 +124,9 @@ export class Game {
       }
     }
   }
-  broadcast(msg) {
+  broadcast(msg, exclude) {
     this.#players.forEach((player) => {
+      if (player === exclude) return
       player.send(msg);
     });
   }
@@ -177,7 +183,7 @@ export class Game {
         explodedTiles.push({ x: nx, y: ny });
         if (tileType === 2) {
           this.setTileType(nx, ny, 1);
-          if (Math.random() < 0.5) { 
+          if (Math.random() < 0.5) {
             this.spawnPowerUp(nx, ny, 'bombpowerup');
           } else {
             this.spawnPowerUp(nx, ny, 'radiusup');
@@ -291,11 +297,7 @@ export class Game {
           type: "player_damaged",
           nickname: player.nickname,
           health: player.health,
-          isDead: player.isDead
         });
-        if (player.isDead) {
-          this.checkGameEnd();
-        }
       }
     }
   }
@@ -306,7 +308,12 @@ export class Game {
       this.broadcast({
         type: "game_ended",
         winner: alivePlayers[0].nickname
-      });
+      }, alivePlayers[0]);
+
+      alivePlayers[0].send({
+        type: "game_ended",
+        winner: "you"
+      })
     }
   }
 }
