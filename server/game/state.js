@@ -60,7 +60,7 @@ export class Game {
         this.broadcast({ type: "game_started" });
         for (const player of this.#players) {
           player.on("player_input", (data) => {
-            player.handleInput(data.input,data.active);
+            player.handleInput(data.input, data.active);
           });
         }
       } catch (error) {
@@ -183,15 +183,19 @@ export class Game {
         explodedTiles.push({ x: nx, y: ny });
         if (tileType === 2) {
           this.setTileType(nx, ny, 1);
-          if (Math.random() < 0.5) {
+           const chance = Math.random() 
+           if (chance < 0.2) {
             this.spawnPowerUp(nx, ny, 'bombpowerup');
-          } else {
+          
+        } else if(chance < 0.4){
             this.spawnPowerUp(nx, ny, 'radiusup');
+          }else if (chance < 0.6) {
+            this.spawnPowerUp(nx, ny, 'speed');            
           }
-          break;
-        }
+          break
       }
     }
+  }
     this.damage(explodedTiles);
     this.removeBomb(bombId);
     this.broadcast({
@@ -244,7 +248,6 @@ export class Game {
       id: this.getNextPowerUpId(),
       position: { x, y },
       type,
-      spawned: Date.now()
     };
 
     this.powerUps.push(powerUp);
@@ -281,6 +284,9 @@ export class Game {
       case 'radiusup':
         player.bombRadius++
         break
+       case "speed": 
+        player.speed += 0.2
+        break;
     }
     this.removePowerUp(powerUpId);
     return true;

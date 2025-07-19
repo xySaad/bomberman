@@ -400,3 +400,42 @@
   100% { transform: rotate(360deg); }
 }
 
+
+.message-input {
+  width: 300px;
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  font-family: 'Orbitron', monospace;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--primary-orange);
+  border-radius: 8px;
+  color:black;
+  text-align: center;
+  outline: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  margin-bottom: 2rem;
+  box-shadow: 
+    0 4px 15px rgba(255, 107, 53, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.message-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.message-input:focus {
+  border-color: var(--accent-yellow);
+  box-shadow: 
+    0 0 20px var(--accent-yellow),
+    0 4px 15px rgba(255, 210, 63, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.message-input:focus::placeholder {
+  color: transparent;
+}

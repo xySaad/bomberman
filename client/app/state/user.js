@@ -82,10 +82,11 @@ export class User {
         id: data.powerUp.id,
         position: data.powerUp.position,
         type: data.powerUp.type,
-        spawned: data.powerUp.spawned,
       });
     },
     power_up_removed: (data) => {
+      console.log(data);
+      
       GameState.powerUps.purge((p) => p.id === data.powerUpId);
     },
   };
