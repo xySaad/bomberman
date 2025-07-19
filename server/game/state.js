@@ -10,7 +10,7 @@ export class Game {
     STARTED: "STARTED", // ready timer has finished
     ENDED: "ENDED", // only one player left or the time limit has ended
   };
-
+  #maxspeed=1.6
   #timeLimit = 3 * 60 * 1000; // 3 minutes time limit for each game
   #minPlayers = 2;
   #bombCounter = 0;
@@ -284,6 +284,7 @@ export class Game {
         player.bombRadius++
         break;
       case "speed":
+        if (player.speed>=this.#maxspeed)break;
         player.speed += 0.2
         player.speed = parseFloat(player.speed.toFixed(1)); 
         break;

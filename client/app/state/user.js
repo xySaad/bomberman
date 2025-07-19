@@ -45,7 +45,7 @@ export class User {
         player.health = data.health;
         player.isDead = data.isDead;
       }
-      if (data.nickname === SelfUser.nickname) {
+      if (data.nickname === SelfUser.nickname) {        
         GameState.playerStats.value = {
           ...GameState.playerStats.value,
           health: data.health,
