@@ -183,10 +183,13 @@ export class Game {
         explodedTiles.push({ x: nx, y: ny });
         if (tileType === 2) {
           this.setTileType(nx, ny, 1);
-          if (Math.random() < 0.5) {
+          const chance = Math.random() 
+          if (chance < 0.2) {
             this.spawnPowerUp(nx, ny, 'bombpowerup');
-          } else {
+          } else if(chance < 0.4){
             this.spawnPowerUp(nx, ny, 'radiusup');
+          } else if (chance < 0.6) {
+            this.spawnPowerUp(nx, ny, 'speed');            
           }
           break;
         }
@@ -280,7 +283,10 @@ export class Game {
         break;
       case 'radiusup':
         player.bombRadius++
-        break
+        break;
+        case "speed": 
+        player.speed += 0.2
+        break;
     }
     this.removePowerUp(powerUpId);
     return true;

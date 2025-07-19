@@ -70,7 +70,9 @@
 .powerup.radiusup {
   background-image: url("../images/radius.png"); /* <- replace with actual path */
 }
-
+.powerup.speed {
+  background-image: url("../images/lightning-bolt.png"); /* <- replace with actual path */
+}
 
 
 /* .bombpowerup {
