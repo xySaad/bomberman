@@ -53,14 +53,14 @@ export class Game {
     if (this.#players.size === this.#minPlayers) {
       try {
         this.#phase = Game.PHASES.WAITING_PLAYERS;
-        await this.lobbyCounter.start(20);
+        await this.lobbyCounter.start(3);
         this.#phase = Game.PHASES.GETTING_READY;
-        await this.lobbyCounter.start(10);
+        await this.lobbyCounter.start(3);
         this.#phase = Game.PHASES.STARTED;
         this.broadcast({ type: "game_started" });
         for (const player of this.#players) {
           player.on("player_input", (data) => {
-            player.handleInput(data.input);
+            player.handleInput(data.input,data.active);
           });
         }
       } catch (error) {

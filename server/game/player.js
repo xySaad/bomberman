@@ -82,6 +82,8 @@ export class Player extends User {
       this.placeBomb();
       return;
     }
+    console.log(input);
+    
     this.#activeKeys[input] = active;
   }
   moveTo(x, y) {
