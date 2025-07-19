@@ -4,6 +4,7 @@ export class User {
     return this.#ws;
   }
   #events = {};
+  destroy() {}
   constructor(ws) {
     this.#ws = ws;
     ws.on("close", () => this.destroy());
