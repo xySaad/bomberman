@@ -85,7 +85,7 @@
 }
 
 .stat-value {
-  color: black;
+  color: white;
 }
 .game-end-screen[data-game-ended=true] {
   display: flex;

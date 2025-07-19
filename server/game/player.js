@@ -82,6 +82,8 @@ export class Player extends User {
       this.placeBomb();
       return;
     }
+    console.log(input);
+    
     this.#activeKeys[input] = active;
   }
   moveTo(x, y) {
@@ -110,6 +112,7 @@ export class Player extends User {
     const block = currentPos > pos ? Math.floor(pos) : Math.ceil(pos);
     return [block];
   }
+  
   canMoveTo(nextX, nextY) {
     const xs = this.getClosetBlock("x", nextX);
     const ys = this.getClosetBlock("y", nextY);

@@ -10,7 +10,7 @@ export class Game {
     STARTED: "STARTED", // ready timer has finished
     ENDED: "ENDED", // only one player left or the time limit has ended
   };
-
+  #maxspeed=1.6
   #timeLimit = 3 * 60 * 1000; // 3 minutes time limit for each game
   #minPlayers = 2;
   #bombCounter = 0;
@@ -53,14 +53,14 @@ export class Game {
     if (this.#players.size === this.#minPlayers) {
       try {
         this.#phase = Game.PHASES.WAITING_PLAYERS;
-        await this.lobbyCounter.start(20);
+        await this.lobbyCounter.start(3);
         this.#phase = Game.PHASES.GETTING_READY;
-        await this.lobbyCounter.start(10);
+        await this.lobbyCounter.start(3);
         this.#phase = Game.PHASES.STARTED;
         this.broadcast({ type: "game_started" });
         for (const player of this.#players) {
           player.on("player_input", (data) => {
-            player.handleInput(data.input);
+            player.handleInput(data.input, data.active);
           });
         }
       } catch (error) {
@@ -183,15 +183,15 @@ export class Game {
         explodedTiles.push({ x: nx, y: ny });
         if (tileType === 2) {
           this.setTileType(nx, ny, 1);
-          const chance = Math.random() 
+          const chance = Math.random()
           if (chance < 0.2) {
-            this.spawnPowerUp(nx, ny, 'bombpowerup');
-          } else if(chance < 0.4){
-            this.spawnPowerUp(nx, ny, 'radiusup');
+            this.spawnPowerUp(nx, ny, 'maxBombs');
+          } else if (chance < 0.4) {
+            this.spawnPowerUp(nx, ny, 'bombRadius');
           } else if (chance < 0.6) {
-            this.spawnPowerUp(nx, ny, 'speed');            
+            this.spawnPowerUp(nx, ny, 'speed');
           }
-          break;
+          break
         }
       }
     }
@@ -247,7 +247,6 @@ export class Game {
       id: this.getNextPowerUpId(),
       position: { x, y },
       type,
-      spawned: Date.now()
     };
 
     this.powerUps.push(powerUp);
@@ -278,24 +277,34 @@ export class Game {
     const powerUp = this.powerUps.find(p => p.id === powerUpId);
     if (!powerUp) return false;
     switch (powerUp.type) {
-      case 'bombpowerup':
+      case 'maxBombs':
         player.maxBombs++;
         break;
-      case 'radiusup':
+      case 'bombRadius':
         player.bombRadius++
         break;
-        case "speed": 
+      case "speed":
+        if (player.speed>=this.#maxspeed)break;
         player.speed += 0.2
+        player.speed = parseFloat(player.speed.toFixed(1)); 
         break;
     }
+    this.broadcast({
+      type: "player_stats_updated",
+      nickname: player.nickname,
+      stat: powerUp.type,
+      value: player[powerUp.type],
+    });
     this.removePowerUp(powerUpId);
     return true;
   }
   damage(explodedTiles) {
     for (const player of this.#players) {
       if (player.isDead) continue;
+      const px = Math.round(player.position.x);
+      const py = Math.round(player.position.y);
       const playerHit = explodedTiles.some(tile =>
-        tile.x === player.position.x && tile.y === player.position.y
+        tile.x === px && tile.y === py
       );
       if (playerHit) {
         player.takeDamage();
@@ -311,6 +320,7 @@ export class Game {
     const alivePlayers = Array.from(this.#players).filter(p => !p.isDead);
     if (alivePlayers.length === 1) {
       this.#phase = Game.PHASES.ENDED;
+      alivePlayers[0].on("player_input", null)
       this.broadcast({
         type: "game_ended",
         winner: alivePlayers[0].nickname

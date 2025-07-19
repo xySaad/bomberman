@@ -21,10 +21,7 @@ wss.on("connection", (ws) => {
         nickname: player.nickname,
         message: data.message,
       });
-    });
-    player.on("player_input", (data) => {
-      player.handleInput(data.input, data.active);
-    });
+    });   
   });
 
   console.log("New connection");

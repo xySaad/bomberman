@@ -1,6 +1,8 @@
 @import url("./static/css/chat.css");
 @import url("./static/css/map.css");
 @import url("./static/css/player.css");
+@import url("./static/css/login.css");
+
 .Lobby {
   max-width: 500px;
   margin: 40px auto;
