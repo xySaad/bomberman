@@ -53,9 +53,9 @@ export class Game {
     if (this.#players.size === this.#minPlayers) {
       try {
         this.#phase = Game.PHASES.WAITING_PLAYERS;
-        await this.lobbyCounter.start(20);
+        await this.lobbyCounter.start(3);
         this.#phase = Game.PHASES.GETTING_READY;
-        await this.lobbyCounter.start(10);
+        await this.lobbyCounter.start(3);
         this.#phase = Game.PHASES.STARTED;
         this.broadcast({ type: "game_started" });
         for (const player of this.#players) {
@@ -185,9 +185,9 @@ export class Game {
           this.setTileType(nx, ny, 1);
           const chance = Math.random()
           if (chance < 0.2) {
-            this.spawnPowerUp(nx, ny, 'bombpowerup');
+            this.spawnPowerUp(nx, ny, 'maxBombs');
           } else if (chance < 0.4) {
-            this.spawnPowerUp(nx, ny, 'radiusup');
+            this.spawnPowerUp(nx, ny, 'bombRadius');
           } else if (chance < 0.6) {
             this.spawnPowerUp(nx, ny, 'speed');
           }
@@ -276,31 +276,23 @@ export class Game {
   collectPowerUp(player, powerUpId) {
     const powerUp = this.powerUps.find(p => p.id === powerUpId);
     if (!powerUp) return false;
-    let changedStat = null;
-    let newValue = null;
     switch (powerUp.type) {
-      case 'bombpowerup':
+      case 'maxBombs':
         player.maxBombs++;
-        changedStat = 'maxBombs';
-        newValue = player.maxBombs;
         break;
-      case 'radiusup':
+      case 'bombRadius':
         player.bombRadius++
-        changedStat = 'bombRadius';
-        newValue = player.bombRadius;
         break;
       case "speed":
         player.speed += 0.2
         player.speed = parseFloat(player.speed.toFixed(1)); 
-        changedStat = 'speed';
-        newValue = player.speed;
         break;
     }
     this.broadcast({
       type: "player_stats_updated",
       nickname: player.nickname,
-     stat: changedStat,
-      value: newValue,
+      stat: powerUp.type,
+      value: player[powerUp.type],
     });
     this.removePowerUp(powerUpId);
     return true;
