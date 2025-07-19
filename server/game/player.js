@@ -6,7 +6,7 @@ export class Player extends User {
   #nickname = null;
   #game = null;
   #stepUnite = 0.3;
-  #speed = 1;
+  speed = 1;
   #throttledMoveTo = throttle(100, (...args) => this.moveTo(...args));
   maxBombs = 1;
   health = 3;
@@ -69,7 +69,7 @@ export class Player extends User {
   }
   nextPosition(input) {
     const { x, y } = this.position;
-    const step = this.#speed * this.#stepUnite;
+    const step = this.speed * this.#stepUnite;
     return {
       ArrowUp: [x, y - step],
       ArrowDown: [x, y + step],
