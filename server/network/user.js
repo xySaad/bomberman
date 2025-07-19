@@ -4,10 +4,10 @@ export class User {
     return this.#ws;
   }
   #events = {};
-  cleanup = null;
+  destroy() {}
   constructor(ws) {
     this.#ws = ws;
-    ws.on("close", () => this.cleanup?.());
+    ws.on("close", () => this.destroy());
     ws.on("message", (raw) => {
       const data = JSON.parse(raw);
       this.#events[data.type]?.(data);

@@ -16,9 +16,21 @@ onkeydown = ({ code }) => {
     SelfUser.send({
       type: "player_input",
       input: code,
+      active: true,
     });
   }
 };
+onkeyup = ({ code }) => {
+  if (allowedKeys.includes(code)) {
+    SelfUser.send({
+      type: "player_input",
+      input: code,
+      active: false,
+    });
+
+  }
+};
+
 export const PlayGround = () => {
   if (SelfUser.state !== User.STATES.READY) return App();
 
@@ -47,7 +59,7 @@ export const PlayGround = () => {
       explosions.map((e) => {
         return div({
           class: "explosion",
-          style: `transform: translate(${e.x * OFFSET}px, ${e.y * OFFSET}px);`
+          style: `transform: translate(${e.x * OFFSET}px, ${e.y * OFFSET}px);`,
         });
       }),
       powerUps.map((powerUp) => {

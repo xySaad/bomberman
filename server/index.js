@@ -15,7 +15,6 @@ wss.on("connection", (ws) => {
     const player = game.createPlayer(user, data.nickname);
     if (player === null) return;
     console.log("logged in as", player.nickname);
-    player.cleanup = () => game.deletePlayer(player);
     player.on("chat", (data) => {
       game.broadcast({
         type: "chat",
@@ -24,7 +23,7 @@ wss.on("connection", (ws) => {
       });
     });
     player.on("player_input", (data) => {
-      player.handleInput(data.input);
+      player.handleInput(data.input, data.active);
     });
   });
 
