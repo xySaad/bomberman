@@ -183,19 +183,18 @@ export class Game {
         explodedTiles.push({ x: nx, y: ny });
         if (tileType === 2) {
           this.setTileType(nx, ny, 1);
-           const chance = Math.random() 
-           if (chance < 0.2) {
+          const chance = Math.random()
+          if (chance < 0.2) {
             this.spawnPowerUp(nx, ny, 'bombpowerup');
-          
-        } else if(chance < 0.4){
+          } else if (chance < 0.4) {
             this.spawnPowerUp(nx, ny, 'radiusup');
-          }else if (chance < 0.6) {
-            this.spawnPowerUp(nx, ny, 'speed');            
+          } else if (chance < 0.6) {
+            this.spawnPowerUp(nx, ny, 'speed');
           }
           break
+        }
       }
     }
-  }
     this.damage(explodedTiles);
     this.removeBomb(bombId);
     this.broadcast({
@@ -283,20 +282,31 @@ export class Game {
         break;
       case 'radiusup':
         player.bombRadius++
-        break
-       case "speed": 
+        break;
+      case "speed":
         player.speed += 0.2
         break;
     }
+    this.broadcast({
+      type: "player_stats_updated",
+      nickname: player.nickname,
+      stats: {
+        maxBombs: player.maxBombs,
+        bombRadius: player.bombRadius,
+        speed: player.speed,
+      }
+    });
     this.removePowerUp(powerUpId);
     return true;
   }
   damage(explodedTiles) {
     for (const player of this.#players) {
       if (player.isDead) continue;
+      const px = Math.round(player.position.x);
+      const py = Math.round(player.position.y);
       const playerHit = explodedTiles.some(tile =>
-        tile.x === player.position.x && tile.y === player.position.y
-      );
+      tile.x === px && tile.y === py
+    );
       if (playerHit) {
         player.takeDamage();
         this.broadcast({
@@ -311,6 +321,7 @@ export class Game {
     const alivePlayers = Array.from(this.#players).filter(p => !p.isDead);
     if (alivePlayers.length === 1) {
       this.#phase = Game.PHASES.ENDED;
+      alivePlayers[0].on("player_input", null)
       this.broadcast({
         type: "game_ended",
         winner: alivePlayers[0].nickname

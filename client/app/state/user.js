@@ -85,9 +85,19 @@ export class User {
       });
     },
     power_up_removed: (data) => {
-      console.log(data);
-      
+      console.log(data)
       GameState.powerUps.purge((p) => p.id === data.powerUpId);
+    },
+    player_stats_updated: (data) => {
+      
+      if (data.nickname === SelfUser.nickname) {
+        GameState.playerStats.value = {
+          ...GameState.playerStats.value,
+          maxBombs: data.stats.maxBombs,
+          bombRadius: data.stats.bombRadius,
+          speed:parseFloat(data.stats.speed.toFixed(1)),
+        };
+      }
     },
   };
 
