@@ -20,6 +20,7 @@ onkeydown = ({ code }) => {
     });
   }
 };
+
 onkeyup = ({ code }) => {
   if (allowedKeys.includes(code)) {
     SelfUser.send({
@@ -40,6 +41,7 @@ export const PlayGround = () => {
   const OFFSET = TILE_SIZE + GAP;
 
   return div({ class: "playground" }).add(
+    GameEndedScreen(),
     div({ class: "grid-wrapper" }).add(
       div({ class: "playground-grid" }).add(
         ...map.map((row) =>
@@ -64,8 +66,9 @@ export const PlayGround = () => {
       }),
       powerUps.map((powerUp) => {
         const pos = powerUp.$.position;
+        const type = powerUp.$.type.value;
         return div({
-          class: "bombpowerup",
+          class: `powerup ${type}`,
           style: ($) => {
             const { x, y } = $(pos);
             return `transform: translate(${x * OFFSET}px, ${y * OFFSET}px);`;
@@ -74,39 +77,56 @@ export const PlayGround = () => {
       }),
       players.map((player) => {
         const pos = player.$.position;
+        const isDead = player.$.isDead;
         return div({
-          class: "player",
+          class: ($) => `player ${$(isDead) ? 'dead' : ''}`,
           style: ($) => {
+            const opacity = $(isDead) ? 0 : 1;
             const { x, y } = $(pos);
-            return `transform: translate(${x * OFFSET}px, ${y * OFFSET}px);`;
+            return `transform: translate(${x * OFFSET}px, ${y * OFFSET}px); opacity: ${opacity};`;
           },
         });
       })
-    )
-    //  StatsDisplay()
+    ),
+    StatsDisplay(),
   );
 };
 
-// const StatsDisplay = () => {
-//   const stats = GameState.playerStats;
-//   console.log(stats.maxBombs);
 
-//   return div({ class: "stats-display" }).add(
-//     div({ class: "stat-item" }).add(
-//       span({ class: "stat-label" }, "💣 Bombs: "),
-//       span({ class: "stat-value" }, ($) => $(stats).maxBombs)
-//     ),
-//     div({ class: "stat-item" }).add(
-//       span({ class: "stat-label" }, "❤️ Health: "),
-//       span({ class: "stat-value" }, ($) => $(stats).health)
-//     ),
-//     div({ class: "stat-item" }).add(
-//       span({ class: "stat-label" }, "⚡ Speed: "),
-//       span({ class: "stat-value" }, ($) => $(stats).speed)
-//     ),
-//     div({ class: "stat-item" }).add(
-//       span({ class: "stat-label" }, "💥 Radius: "),
-//       span({ class: "stat-value" }, ($) => $(stats).bombRadius)
-//     )
-//   );
-// };
+const StatsDisplay = () => {
+  const stats = GameState.playerStats;
+
+  return div({ class: "stats-display" }).add(
+    div({ class: "stat-item" }).add(
+      span({ class: "stat-label", textContent: "💣 Bombs: " }),
+      span({ class: "stat-value", textContent: ($) => $(stats).maxBombs })
+    ),
+    div({ class: "stat-item" }).add(
+      span({ class: "stat-label", textContent: "❤️ Health: " }),
+      span({ class: "stat-value", textContent: ($) => $(stats).health })
+    ),
+    div({ class: "stat-item" }).add(
+      span({ class: "stat-label", textContent: "⚡ Speed: " }),
+      span({ class: "stat-value", textContent: ($) => $(stats).speed })
+    ),
+    div({ class: "stat-item" }).add(
+      span({ class: "stat-label", textContent: "💥 Radius: " }),
+      span({ class: "stat-value", textContent: ($) => $(stats).bombRadius })
+    )
+  );
+};
+
+const GameEndedScreen = () => {
+  return div({ class: "game-end-screen", "data-game-ended": ($) => $(GameState.gameEnded) }).add(
+    div({ class: "game-end-content" }).add(
+      div({
+        class: "game-end-title",
+        textContent: ($) => `${$(GameState.gameWinner)} Won! 🏆`
+      }),
+      div({
+        class: "game-end-subtitle",
+        textContent: "Game Over"
+      })
+    )
+  );
+};

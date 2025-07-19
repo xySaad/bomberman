@@ -13,7 +13,9 @@ export class User {
       this.#events[data.type]?.(data);
     });
   }
+  destroy() {
 
+  }
   on(event, handler) {
     this.#events[event] = handler;
   }

@@ -58,6 +58,11 @@ export class Game {
         await this.lobbyCounter.start(10);
         this.#phase = Game.PHASES.STARTED;
         this.broadcast({ type: "game_started" });
+        for (const player of this.#players) {
+          player.on("player_input", (data) => {
+            player.handleInput(data.input);
+          });
+        }
       } catch (error) {
         console.error(error);
       }
@@ -119,8 +124,9 @@ export class Game {
       }
     }
   }
-  broadcast(msg) {
+  broadcast(msg, exclude) {
     this.#players.forEach((player) => {
+      if (player === exclude) return
       player.send(msg);
     });
   }
@@ -175,17 +181,18 @@ export class Game {
         }
 
         explodedTiles.push({ x: nx, y: ny });
-
         if (tileType === 2) {
-          //  tile kichnaga ms flfront not yet 
           this.setTileType(nx, ny, 1);
-          if (Math.random() < 0.7) { // 100% chance for now hh
+          if (Math.random() < 0.5) {
             this.spawnPowerUp(nx, ny, 'bombpowerup');
+          } else {
+            this.spawnPowerUp(nx, ny, 'radiusup');
           }
           break;
         }
       }
     }
+    this.damage(explodedTiles);
     this.removeBomb(bombId);
     this.broadcast({
       type: "bomb_exploded",
@@ -232,7 +239,7 @@ export class Game {
     }
   }
 
-  spawnPowerUp(x, y, type = 'bomb') {
+  spawnPowerUp(x, y, type) {
     const powerUp = {
       id: this.getNextPowerUpId(),
       position: { x, y },
@@ -267,17 +274,46 @@ export class Game {
   collectPowerUp(player, powerUpId) {
     const powerUp = this.powerUps.find(p => p.id === powerUpId);
     if (!powerUp) return false;
-
-
     switch (powerUp.type) {
       case 'bombpowerup':
         player.maxBombs++;
         break;
-      // power ups lokhrin 
+      case 'radiusup':
+        player.bombRadius++
+        break
     }
-
     this.removePowerUp(powerUpId);
-
     return true;
+  }
+  damage(explodedTiles) {
+    for (const player of this.#players) {
+      if (player.isDead) continue;
+      const playerHit = explodedTiles.some(tile =>
+        tile.x === player.position.x && tile.y === player.position.y
+      );
+      if (playerHit) {
+        player.takeDamage();
+        this.broadcast({
+          type: "player_damaged",
+          nickname: player.nickname,
+          health: player.health,
+        });
+      }
+    }
+  }
+  checkGameEnd() {
+    const alivePlayers = Array.from(this.#players).filter(p => !p.isDead);
+    if (alivePlayers.length === 1) {
+      this.#phase = Game.PHASES.ENDED;
+      this.broadcast({
+        type: "game_ended",
+        winner: alivePlayers[0].nickname
+      }, alivePlayers[0]);
+
+      alivePlayers[0].send({
+        type: "game_ended",
+        winner: "you"
+      })
+    }
   }
 }

@@ -19,6 +19,8 @@ export class Player extends User {
     ArrowRight: false,
     ArrowLeft: false,
   };
+  bombs = 0
+  isDead = false;
   get nickname() {
     return this.#nickname;
   }
@@ -48,9 +50,22 @@ export class Player extends User {
       }
     }, 100);
   }
+
   destroy() {
+    super.destroy()
+    this.#game.deletePlayer(this)
+    this.#game.checkGameEnd();
     clearInterval(this.#intervalId);
-    this.#game.deletePlayer(this);
+  }
+  takeDamage() {
+    this.health -= 1;
+    if (this.health < 1) {
+      this.health = 0;
+      this.on("player_input", null)
+      this.isDead = true;
+      this.#game.broadcast({ type: "player_deleted", nickname: this.nickname });
+      this.#game.checkGameEnd();
+    }
   }
   nextPosition(input) {
     const { x, y } = this.position;
