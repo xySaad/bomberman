@@ -53,9 +53,9 @@ export class Game {
     if (this.#players.size === this.#minPlayers) {
       try {
         this.#phase = Game.PHASES.WAITING_PLAYERS;
-        await this.lobbyCounter.start(3);
+        await this.lobbyCounter.start(20);
         this.#phase = Game.PHASES.GETTING_READY;
-        await this.lobbyCounter.start(3);
+        await this.lobbyCounter.start(10);
         this.#phase = Game.PHASES.STARTED;
         this.broadcast({ type: "game_started" });
         for (const player of this.#players) {
@@ -276,25 +276,31 @@ export class Game {
   collectPowerUp(player, powerUpId) {
     const powerUp = this.powerUps.find(p => p.id === powerUpId);
     if (!powerUp) return false;
+    let changedStat = null;
+    let newValue = null;
     switch (powerUp.type) {
       case 'bombpowerup':
         player.maxBombs++;
+        changedStat = 'maxBombs';
+        newValue = player.maxBombs;
         break;
       case 'radiusup':
         player.bombRadius++
+        changedStat = 'bombRadius';
+        newValue = player.bombRadius;
         break;
       case "speed":
         player.speed += 0.2
+        player.speed = parseFloat(player.speed.toFixed(1)); 
+        changedStat = 'speed';
+        newValue = player.speed;
         break;
     }
     this.broadcast({
       type: "player_stats_updated",
       nickname: player.nickname,
-      stats: {
-        maxBombs: player.maxBombs,
-        bombRadius: player.bombRadius,
-        speed: player.speed,
-      }
+     stat: changedStat,
+      value: newValue,
     });
     this.removePowerUp(powerUpId);
     return true;
@@ -305,8 +311,8 @@ export class Game {
       const px = Math.round(player.position.x);
       const py = Math.round(player.position.y);
       const playerHit = explodedTiles.some(tile =>
-      tile.x === px && tile.y === py
-    );
+        tile.x === px && tile.y === py
+      );
       if (playerHit) {
         player.takeDamage();
         this.broadcast({

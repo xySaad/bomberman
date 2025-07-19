@@ -38,7 +38,7 @@
     radial-gradient(circle at 70% 70%, var(--primary-blue) 0%, transparent 25%),
     radial-gradient(circle at 50% 20%, var(--accent-yellow) 0%, transparent 15%);
   opacity: 0.08;
-  animation: drift 8s ease-in-out infinite alternate;
+  /* animation: drift 8s ease-in-out infinite alternate; */
   z-index: -1;
 }
 
@@ -59,12 +59,7 @@
   text-shadow: 
     0 0 10px var(--primary-orange),
     0 0 20px var(--primary-orange);
-  animation: welcomeGlow 3s ease-in-out infinite alternate;
-}
-
-@keyframes welcomeGlow {
-  0% { text-shadow: 0 0 10px var(--primary-orange), 0 0 20px var(--primary-orange); }
-  100% { text-shadow: 0 0 15px var(--primary-orange), 0 0 30px var(--primary-orange), 0 0 40px var(--primary-orange); }
+  /* animation: welcomeGlow 3s ease-in-out infinite alternate; */
 }
 
 /* Player Count and Status */
@@ -91,7 +86,7 @@
 .Lobby p:first-of-type {
   border-color: var(--accent-yellow);
   color: var(--accent-yellow);
-  animation: playerPulse 2s infinite;
+  /* animation: playerPulse 2s infinite; */
 }
 
 @keyframes playerPulse {
@@ -102,7 +97,7 @@
 .Lobby p:last-of-type {
   border-color: var(--primary-blue);
   color: var(--primary-blue);
-  animation: countdown 1s infinite;
+  /* animation: countdown 1s infinite; */
 }
 
 @keyframes countdown {
@@ -392,12 +387,7 @@
   border-style: solid;
   border-width: 0 0 8px 8px;
   border-color: transparent transparent var(--accent-yellow) transparent;
-  animation: rotate 1s linear infinite;
-}
-
-@keyframes rotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  /* animation: rotate 1s linear infinite; */
 }
 
 
