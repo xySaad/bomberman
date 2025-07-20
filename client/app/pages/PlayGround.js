@@ -103,7 +103,7 @@ const StatsDisplay = () => {
     ),
     div({ class: "stat-item" }).add(
       span({ class: "stat-label", textContent: "❤️ Health: " }),
-      span({ class: "stat-value", textContent: ($) => $(stats).health })
+      span({ class: "stat-value", textContent: (($) => `${$(stats).health}`)})
     ),
     div({ class: "stat-item" }).add(
       span({ class: "stat-label", textContent: "⚡ Speed: " }),

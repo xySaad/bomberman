@@ -32,6 +32,7 @@ export const Lobby = () => {
       input({
         is: { value: message },
         placeholder: "Enter your message",
+         class: "message-input",
         keydown: {
           enter: () => {
             if (message.value.trim().length > 0) {

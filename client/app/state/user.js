@@ -45,7 +45,7 @@ export class User {
         player.health = data.health;
         player.isDead = data.isDead;
       }
-      if (data.nickname === SelfUser.nickname) {
+      if (data.nickname === SelfUser.nickname) {        
         GameState.playerStats.value = {
           ...GameState.playerStats.value,
           health: data.health,
@@ -82,12 +82,20 @@ export class User {
         id: data.powerUp.id,
         position: data.powerUp.position,
         type: data.powerUp.type,
-        spawned: data.powerUp.spawned,
       });
     },
     power_up_removed: (data) => {
+      console.log(data)
       GameState.powerUps.purge((p) => p.id === data.powerUpId);
     },
+    player_stats_updated: (data) => {
+      if (data.nickname === SelfUser.nickname) {
+        GameState.playerStats.value = {
+          ...GameState.playerStats.value,
+          [data.stat]: data.value
+        };
+      }
+    }
   };
 
   static async new(serverUrl = `ws://${location.hostname}:3000`) {
