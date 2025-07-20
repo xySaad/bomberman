@@ -2,60 +2,80 @@
   position: absolute;
   width: 42px;
   height: 42px;
-  background-image: url("../images/player.png");
-  background-size: cover;
+  background-image: url("../images/Idle.png");
+  background-size: 252px 42px;
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: 0 0;
   border-radius: 4px;
   z-index: 10;
-  transition: transform 200ms;
+  transition: top 150ms ease-out, left 150ms ease-out, transform 150ms ease-out;
   pointer-events: none;
-  top: 2px;
-  left: 3px;
+  top: 0;
+  left: 0;
+  animation: idle-animation 1.2s steps(6) infinite;
+}
+.player.moving {
+  background-image: url("../images/Run.png");
+  background-size: 336px 42px;
+  background-position: 0 0;
+  animation: running-animation 0.6s steps(8) infinite;
+}
+
+@keyframes idle-animation {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -252px 0;
+  }
+}
+
+@keyframes running-animation {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -336px 0;
+  }
 }
 .bomb {
-  position: absolute; 
+  position: absolute;
   width: 42px;
   height: 42px;
   background-image: url("../images/bomb.svg");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  z-index: 5; 
-  transition: transform 0.15s;  
+  z-index: 5;
+  transition: transform 0.15s;
   top: 0;
   left: 0;
   pointer-events: none;
 }
 
 .explosion {
-  position: absolute; 
+  position: absolute;
   width: 42px;
   height: 42px;
   background-image: url("../images/explosion.gif");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  z-index: 10; 
-  transition: transform 0.15s;  
+  z-index: 10;
+  transition: transform 0.15s;
   top: 0;
   left: 0;
   pointer-events: none;
 }
 
-
-
-
-
-
 .powerup {
-  position: absolute; 
+  position: absolute;
   width: 42px;
   height: 42px;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  z-index: 6; 
+  z-index: 6;
   transition: transform 0.3s ease;
   top: 0;
   left: 0;
@@ -66,23 +86,9 @@
 .powerup.maxBombs {
   background-image: url("../images/bombpowerup.png");
 }
-
 .powerup.bombRadius {
-  background-image: url("../images/radius.png"); /* <- replace with actual path */
+  background-image: url("../images/radius.png");
 }
 .powerup.speed {
-  background-image: url("../images/lightning-bolt.png"); /* <- replace with actual path */
+  background-image: url("../images/lightning-bolt.png");
 }
-
-/* .bombpowerup {
-  animation: powerUpFloat 2s ease-in-out infinite;
-} */
-
-/* @keyframes powerUpFloat {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-3px);
-  }
-} */
