@@ -62,7 +62,6 @@
   position: absolute;
   top: -60px; /* Adjust depending on how much space you want above the grid */
   left: 50%;
-  transform: translateX(-50%);
   display: flex;
   gap: 20px;
   padding: 8px 16px;
@@ -71,12 +70,13 @@
   color: black;
   font-size: 16px;
   z-index: 10;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
 }
 
 .stat-item {
   display: flex;
   gap: 5px;
+  position: relative;
+  will-change: transform;
 }
 
 .stat-label {
