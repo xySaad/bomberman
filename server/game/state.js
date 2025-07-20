@@ -94,6 +94,13 @@ export class Game {
       });
       return null;
     }
+    if (nickname.length > 10 || nickname.length < 3) {
+      user.send({
+        type: "register_error",
+        reason: "Nickname must have between 3 and 10 characters!",
+      });
+      return null;
+    }
     const player = new Player(user.ws, nickname, this);
     this.players.add(player);
     this.broadcast({
