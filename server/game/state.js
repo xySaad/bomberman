@@ -10,8 +10,8 @@ export class Game {
     STARTED: "STARTED", // ready timer has finished
     ENDED: "ENDED", // only one player left or the time limit has ended
   };
-  #maxspeed=1.6
-  #timeLimit = 3 * 60 * 1000; // 3 minutes time limit for each game
+  #maxspeed = 1.6
+  #maxradius=4
   #minPlayers = 2;
   #bombCounter = 0;
   #powerUpCounter = 0;
@@ -53,9 +53,9 @@ export class Game {
     if (this.#players.size === this.#minPlayers) {
       try {
         this.#phase = Game.PHASES.WAITING_PLAYERS;
-        await this.lobbyCounter.start(3);
+        await this.lobbyCounter.start(20);
         this.#phase = Game.PHASES.GETTING_READY;
-        await this.lobbyCounter.start(3);
+        await this.lobbyCounter.start(10);
         this.#phase = Game.PHASES.STARTED;
         this.broadcast({ type: "game_started" });
         for (const player of this.#players) {
@@ -183,12 +183,11 @@ export class Game {
         explodedTiles.push({ x: nx, y: ny });
         if (tileType === 2) {
           this.setTileType(nx, ny, 1);
-          const chance = Math.random()
-          if (chance < 0.2) {
+          if (Math.random() < 0.2) {
             this.spawnPowerUp(nx, ny, 'maxBombs');
-          } else if (chance < 0.4) {
+          } else if (Math.random() < 0.2) {
             this.spawnPowerUp(nx, ny, 'bombRadius');
-          } else if (chance < 0.6) {
+          } else if (Math.random() < 0.2) {
             this.spawnPowerUp(nx, ny, 'speed');
           }
           break
@@ -281,12 +280,14 @@ export class Game {
         player.maxBombs++;
         break;
       case 'bombRadius':
+        if (player.bombRadius >= this.#maxradius) break;
+
         player.bombRadius++
         break;
       case "speed":
-        if (player.speed>=this.#maxspeed)break;
+        if (player.speed >= this.#maxspeed) break;
         player.speed += 0.2
-        player.speed = parseFloat(player.speed.toFixed(1)); 
+        player.speed = parseFloat(player.speed.toFixed(1));
         break;
     }
     this.broadcast({
