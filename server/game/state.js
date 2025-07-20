@@ -319,7 +319,7 @@ export class Game {
   }
   checkGameEnd() {
     const alivePlayers = Array.from(this.#players).filter(p => !p.isDead);
-    if (alivePlayers.length === 1) {
+    if (alivePlayers.length === 1&& this.#phase===Game.PHASES.STARTED) {
       this.#phase = Game.PHASES.ENDED;
       alivePlayers[0].on("player_input", null)
       this.broadcast({
