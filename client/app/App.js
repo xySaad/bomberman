@@ -13,6 +13,7 @@ export const App = () => {
       router.navigate("/play");
 
     default:
+      console.error("route not found ");
       break;
   }
   return "";

@@ -1,8 +1,8 @@
-import html from "rbind";
+import html, { router } from "rbind";
 import { GameState } from "../state/game";
 import { SelfUser, User } from "../state/user";
 import { App } from "../App";
-const { div, span } = html;
+const { div, span, button } = html;
 const getClass = ["wall", "ground", "box", "unbreakable"];
 const allowedKeys = [
   "ArrowUp",
@@ -127,6 +127,17 @@ const GameEndedScreen = () => {
       div({
         class: "game-end-subtitle",
         textContent: "Game Over"
+      })
+    ),
+    div({ class: "play-again" }).add(
+      button({
+        class: "play-again-btn",
+        textContent: "Play Again",
+        onclick: async () => {
+          GameState.reset()
+          await SelfUser.connect(SelfUser.nickname)
+          router.navigate("/lobby")
+        },
       })
     )
   );
