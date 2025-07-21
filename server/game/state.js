@@ -75,9 +75,7 @@ export class Game {
   getPlayersList() {
     return Array.from(this.#players.values()).map((player) => ({
       nickname: player.nickname,
-      position: player.getVisualPosition
-        ? player.getVisualPosition()
-        : player.position,
+      position: player.position,
     }));
   }
 
@@ -104,9 +102,7 @@ export class Game {
     const player = new Player(user.ws, nickname, this);
     this.players.add(player);
     this.broadcast({
-      position: player.getVisualPosition
-        ? player.getVisualPosition()
-        : player.position,
+      position: player.position,
       nickname: player.nickname,
       type: "new_player",
     });
