@@ -2,8 +2,7 @@
   position: absolute;
   width: 42px;
   height: 42px;
-  background-image: url("../images/Idle.png");
-  background-size: 252px 42px;
+  background-size: 288px 48px;
   background-repeat: no-repeat;
   background-position: 0 0;
   border-radius: 4px;
@@ -12,30 +11,77 @@
   pointer-events: none;
   top: 0;
   left: 0;
-  animation: idle-animation 1.2s steps(6) infinite;
-}
-.player.moving {
-  background-image: url("../images/Run.png");
-  background-size: 336px 42px;
-  background-position: 0 0;
-  animation: running-animation 0.6s steps(8) infinite;
 }
 
-@keyframes idle-animation {
+/* Default idle animation */
+.player.idle {
+  background-image: url("../images/idle.png");
+  animation: player-idle 1s steps(6) infinite;
+}
+
+/* Movement directions */
+.player.up {
+  background-image: url("../images/up.png");
+  animation: player-run 0.6s steps(6) infinite;
+}
+.player.down {
+  background-image: url("../images/down.png");
+  animation: player-run 0.6s steps(6) infinite;
+}
+.player.left {
+  background-image: url("../images/left.png");
+  animation: player-run 0.6s steps(6) infinite;
+}
+.player.right {
+  background-image: url("../images/right.png");
+  animation: player-run 0.6s steps(6) infinite;
+}
+
+/* Death animation (4 frames) */
+.player.dead {
+  background-image: url("../images/death.png");
+  animation: player-death 1s steps(6) forwards; /* 6 frames over 1s */
+}
+
+.player.damaged {
+  background-image: url("../images/damage.png");
+  animation: player-damage 0.6s steps(4) forwards; /* 4 frames over 0.6s */
+}
+
+
+@keyframes player-damage {
   from {
     background-position: 0 0;
   }
   to {
-    background-position: -252px 0;
+    background-position: -288px 0; /* 4 frames × 48px */
   }
 }
 
-@keyframes running-animation {
+@keyframes player-idle {
   from {
     background-position: 0 0;
   }
   to {
-    background-position: -336px 0;
+    background-position: -288px 0;
+  }
+}
+
+@keyframes player-run {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -288px 0;
+  }
+}
+
+@keyframes player-death {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -288px 0; /* 6 frames * 48px = 288px */
   }
 }
 .bomb {
