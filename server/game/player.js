@@ -119,8 +119,6 @@ export class Player extends User {
     const { map } = this.#game;
     for (const x of xs) {
       for (const y of ys) {
-        console.log(x, y);
-
         if (y < 0 || y >= map.length || x < 0 || x >= map[0].length)
           return false;
 

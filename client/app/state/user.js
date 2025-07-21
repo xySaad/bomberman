@@ -97,7 +97,6 @@ export class User {
       });
     },
     power_up_removed: (data) => {
-      console.log(data);
       GameState.powerUps.purge((p) => p.id === data.powerUpId);
     },
     player_stats_updated: (data) => {

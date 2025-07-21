@@ -53,20 +53,30 @@
   pointer-events: none;
 }
 
-.explosion {
+ .explosion {
   position: absolute;
   width: 42px;
   height: 42px;
-  background-image: url("../images/explosion.gif");
-  background-size: cover;
+  background-image: url("../images/explosion_sprite_sheet.png");
+  background-size: 504px 42px; /* Full size of the sprite sheet */
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: 0px 0px;
   z-index: 10;
-  transition: transform 0.15s;
   top: 0;
   left: 0;
   pointer-events: none;
+  animation: explosionAnim 600ms steps(12) forwards;
 }
+
+@keyframes explosionAnim {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: -504px 0px; /* Move full sheet width to the left */
+  }
+}
+ 
 
 .powerup {
   position: absolute;

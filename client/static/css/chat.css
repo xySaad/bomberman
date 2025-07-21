@@ -120,17 +120,7 @@
   position: relative;
 }
 
-.Chat-Container::before {
-  content: '💬';
-  position: absolute;
-  top: -15px;
-  left: 20px;
-  font-size: 1.5rem;
-  background: var(--dark-bg);
-  padding: 0 10px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px var(--primary-orange);
-}
+
 
 /* Chat Messages */
 .Chat-Messages {
