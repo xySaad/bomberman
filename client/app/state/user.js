@@ -35,7 +35,6 @@ export class User {
     game_ended: (msg) => {
       GameState.gameWinner.value = msg.winner;
       GameState.gameEnded.value = true;
-      // console.log(GameState.gameWinner,GameState.gameEnded);
     },
     player_damaged: (data) => {
       const player = GameState.players.value.find(
@@ -45,7 +44,7 @@ export class User {
         player.health = data.health;
         player.isDead = data.isDead;
       }
-      if (data.nickname === SelfUser.nickname) {        
+      if (data.nickname === SelfUser.nickname) {
         GameState.playerStats.value = {
           ...GameState.playerStats.value,
           health: data.health,
@@ -56,10 +55,19 @@ export class User {
       }
     },
     player_move: (data) => {
-      const palyer = GameState.players.value.find(
+      const player = GameState.players.value.find(
         (p) => p.nickname === data.nickname
       );
-      if (palyer) palyer.position = { x: data.x, y: data.y };
+      if (player) {
+        player.isMoving = true;
+        if (player.position.x !== data.x) {
+          player.scale = player.position.x > data.x ? -1 : 1;
+          player.isMoving = true;
+        } else {
+          player.isMoving = false;
+        }
+        player.position = { x: data.x, y: data.y };
+      }
     },
     bomb_placed: (data) => {
       GameState.bombs.push({
@@ -85,17 +93,16 @@ export class User {
       });
     },
     power_up_removed: (data) => {
-      console.log(data)
       GameState.powerUps.purge((p) => p.id === data.powerUpId);
     },
     player_stats_updated: (data) => {
       if (data.nickname === SelfUser.nickname) {
         GameState.playerStats.value = {
           ...GameState.playerStats.value,
-          [data.stat]: data.value
+          [data.stat]: data.value,
         };
       }
-    }
+    },
   };
 
   static async new(serverUrl = `ws://${location.hostname}:3000`) {
@@ -132,6 +139,9 @@ export class User {
         GameState.players.push(...msg.players);
         GameState.map = msg.map.map((row) => list(row));
         GameState.position = msg.position;
+        if (msg.chatMessages) {
+          GameState.chatMessages.push(...msg.chatMessages);
+        }
         resolve();
       });
       this.on("register_error", (msg) => {

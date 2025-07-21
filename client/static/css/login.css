@@ -1,6 +1,6 @@
 /* Bomberman Login Page Styles */
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
 
 :root {
   --primary-orange: #ff6b35;
@@ -20,7 +20,7 @@
 
 body {
   margin: 0;
-  font-family: 'Orbitron', monospace;
+  font-family: "Orbitron", monospace;
   background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
   min-height: 100vh;
   overflow: hidden;
@@ -29,14 +29,17 @@ body {
 
 /* Animated Background */
 body::before {
-  content: '';
+  content: "";
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: 
-    radial-gradient(circle at 20% 20%, var(--primary-orange) 0%, transparent 30%),
+  background: radial-gradient(
+      circle at 20% 20%,
+      var(--primary-orange) 0%,
+      transparent 30%
+    ),
     radial-gradient(circle at 80% 80%, var(--primary-blue) 0%, transparent 30%),
     radial-gradient(circle at 60% 40%, var(--accent-yellow) 0%, transparent 20%);
   opacity: 0.1;
@@ -45,20 +48,27 @@ body::before {
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.05); }
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
 }
 
 /* Floating particles effect */
 body::after {
-  content: '';
+  content: "";
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: 
-    radial-gradient(2px 2px at 20px 30px, var(--accent-yellow), transparent),
+  background-image: radial-gradient(
+      2px 2px at 20px 30px,
+      var(--accent-yellow),
+      transparent
+    ),
     radial-gradient(2px 2px at 40px 70px, var(--primary-orange), transparent),
     radial-gradient(1px 1px at 90px 40px, var(--primary-blue), transparent),
     radial-gradient(1px 1px at 130px 80px, var(--accent-yellow), transparent),
@@ -71,8 +81,12 @@ body::after {
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  100% { transform: translateY(-100px); }
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-100px);
+  }
 }
 
 .LoginPage {
@@ -87,7 +101,6 @@ body::after {
 }
 
 .LoginPage::before {
-  content: '💣';
   position: absolute;
   top: 10%;
   left: 50%;
@@ -98,9 +111,19 @@ body::after {
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-  40% { transform: translateX(-50%) translateY(-20px); }
-  60% { transform: translateX(-50%) translateY(-10px); }
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  40% {
+    transform: translateX(-50%) translateY(-20px);
+  }
+  60% {
+    transform: translateX(-50%) translateY(-10px);
+  }
 }
 
 .LoginPage h1 {
@@ -111,23 +134,27 @@ body::after {
   margin: 0 0 3rem 0;
   text-transform: uppercase;
   letter-spacing: 3px;
-  text-shadow: 
-    0 0 10px var(--primary-orange),
-    0 0 20px var(--primary-orange),
+  text-shadow: 0 0 10px var(--primary-orange), 0 0 20px var(--primary-orange),
     0 0 30px var(--primary-orange);
   /* animation: glow 2s ease-in-out infinite alternate; */
 }
 
 @keyframes glow {
-  from { text-shadow: 0 0 10px var(--primary-orange), 0 0 20px var(--primary-orange), 0 0 30px var(--primary-orange); }
-  to { text-shadow: 0 0 20px var(--primary-orange), 0 0 30px var(--primary-orange), 0 0 40px var(--primary-orange); }
+  from {
+    text-shadow: 0 0 10px var(--primary-orange), 0 0 20px var(--primary-orange),
+      0 0 30px var(--primary-orange);
+  }
+  to {
+    text-shadow: 0 0 20px var(--primary-orange), 0 0 30px var(--primary-orange),
+      0 0 40px var(--primary-orange);
+  }
 }
 
 .nickname-input {
   width: 300px;
   padding: 1rem 1.5rem;
   font-size: 1.1rem;
-  font-family: 'Orbitron', monospace;
+  font-family: "Orbitron", monospace;
   font-weight: 700;
   background: rgba(255, 255, 255, 0.1);
   border: 2px solid var(--primary-orange);
@@ -138,8 +165,7 @@ body::after {
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   margin-bottom: 2rem;
-  box-shadow: 
-    0 4px 15px rgba(255, 107, 53, 0.2),
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
@@ -151,9 +177,7 @@ body::after {
 
 .nickname-input:focus {
   border-color: var(--accent-yellow);
-  box-shadow: 
-    0 0 20px var(--accent-yellow),
-    0 4px 15px rgba(255, 210, 63, 0.3),
+  box-shadow: 0 0 20px var(--accent-yellow), 0 4px 15px rgba(255, 210, 63, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
 }
@@ -165,9 +189,13 @@ body::after {
 button {
   padding: 1rem 2.5rem;
   font-size: 1.1rem;
-  font-family: 'Orbitron', monospace;
+  font-family: "Orbitron", monospace;
   font-weight: 700;
-  background: linear-gradient(45deg, var(--primary-orange), var(--accent-yellow));
+  background: linear-gradient(
+    45deg,
+    var(--primary-orange),
+    var(--accent-yellow)
+  );
   border: none;
   border-radius: 8px;
   color: var(--dark-bg);
@@ -177,27 +205,30 @@ button {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  box-shadow: 
-    0 4px 15px rgba(255, 107, 53, 0.4),
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
   margin-bottom: 2rem;
 }
 
 button::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
   transition: left 0.5s ease;
 }
 
 button:hover {
   transform: translateY(-3px);
-  box-shadow: 
-    0 8px 25px rgba(255, 107, 53, 0.6),
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
@@ -226,20 +257,35 @@ button:active {
 }
 
 .loading::after {
-  content: '...';
+  content: "...";
   animation: dots 1.5s infinite;
 }
 
 @keyframes pulse-text {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes dots {
-  0%, 20% { content: ''; }
-  40% { content: '.'; }
-  60% { content: '..'; }
-  80%, 100% { content: '...'; }
+  0%,
+  20% {
+    content: "";
+  }
+  40% {
+    content: ".";
+  }
+  60% {
+    content: "..";
+  }
+  80%,
+  100% {
+    content: "...";
+  }
 }
 
 .error {
@@ -254,9 +300,23 @@ button:active {
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
 }
 
 /* Responsive Design */
@@ -265,12 +325,12 @@ button:active {
     font-size: 2rem;
     margin-bottom: 2rem;
   }
-  
+
   .nickname-input {
     width: 280px;
     font-size: 1rem;
   }
-  
+
   button {
     padding: 0.8rem 2rem;
     font-size: 1rem;
@@ -281,19 +341,18 @@ button:active {
   .LoginPage {
     padding: 1rem;
   }
-  
+
   .LoginPage h1 {
     font-size: 1.5rem;
     letter-spacing: 2px;
   }
-  
+
   .nickname-input {
     width: 250px;
   }
-  
+
   button {
     padding: 0.7rem 1.5rem;
     font-size: 0.9rem;
   }
 }
-

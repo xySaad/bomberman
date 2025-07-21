@@ -19,7 +19,7 @@ export class Player extends User {
     ArrowRight: false,
     ArrowLeft: false,
   };
-  bombs = 0
+  bombs = 0;
   isDead = false;
   get nickname() {
     return this.#nickname;
@@ -32,6 +32,7 @@ export class Player extends User {
       type: "self_register",
       players: game.getPlayersList(),
       map: game.map,
+      chatMessages: game.chatMessages,
     });
     this.#nickname = nickname;
     this.position = PLAYER_SPAWNS[game.players.size];
@@ -52,8 +53,8 @@ export class Player extends User {
   }
 
   destroy() {
-    super.destroy()
-    this.#game.deletePlayer(this)
+    super.destroy();
+    this.#game.deletePlayer(this);
     this.#game.checkGameEnd();
     clearInterval(this.#intervalId);
   }
@@ -61,7 +62,7 @@ export class Player extends User {
     this.health -= 1;
     if (this.health < 1) {
       this.health = 0;
-      this.on("player_input", null)
+      this.on("player_input", null);
       this.isDead = true;
       this.#game.broadcast({ type: "player_deleted", nickname: this.nickname });
       this.#game.checkGameEnd();
@@ -118,8 +119,6 @@ export class Player extends User {
     const { map } = this.#game;
     for (const x of xs) {
       for (const y of ys) {
-        console.log(x, y);
-
         if (y < 0 || y >= map.length || x < 0 || x >= map[0].length)
           return false;
 

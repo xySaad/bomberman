@@ -77,13 +77,14 @@ export const PlayGround = () => {
       }),
       players.map((player) => {
         const pos = player.$.position;
-        const isDead = player.$.isDead;
+        const isMoving = player.$.isMoving;        
         return div({
-          class: ($) => `player ${$(isDead) ? 'dead' : ''}`,
+          class: ($) => `player ${$(isMoving) ? "moving" : ""}`,
           style: ($) => {
-            const opacity = $(isDead) ? 0 : 1;
             const { x, y } = $(pos);
-            return `transform: translate(${x * OFFSET}px, ${y * OFFSET}px); opacity: ${opacity};`;
+            return `transform: translate(${x * OFFSET}px, ${
+              y * OFFSET
+            }px) scaleX(${player.scale || -1});`;
           },
         });
       })

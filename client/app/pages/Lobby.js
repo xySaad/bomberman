@@ -8,7 +8,7 @@ export const Lobby = () => {
   if (SelfUser.state !== User.STATES.REGISTERED) return App();
   const { players, chatMessages, counter } = GameState;
   const message = state("");
-  
+
   return div({ class: "Lobby" }).add(
     h2({ textContent: `Hello ${SelfUser.nickname}` }),
     p({ textContent: ($) => `Players in lobby: ${$(players).length}/4` }),
@@ -32,7 +32,7 @@ export const Lobby = () => {
       input({
         is: { value: message },
         placeholder: "Enter your message",
-         class: "message-input",
+        class: "message-input",
         keydown: {
           enter: () => {
             if (message.value.trim().length > 0) {
@@ -42,13 +42,6 @@ export const Lobby = () => {
           },
         },
       })
-    ),
-    button({
-      textContent: "Start Game (debug only)",
-      onclick: () => {
-        SelfUser.state = User.STATES.READY;
-        router.navigate("/play");
-      },
-    })
+    )
   );
 };

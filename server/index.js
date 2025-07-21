@@ -16,12 +16,17 @@ wss.on("connection", (ws) => {
     if (player === null) return;
     console.log("logged in as", player.nickname);
     player.on("chat", (data) => {
-      game.broadcast({
+      const chatMessage = {
         type: "chat",
         nickname: player.nickname,
         message: data.message,
+      };
+      game.broadcast(chatMessage);
+      game.chatMessages.push({
+        nickname: player.nickname,
+        message: data.message,
       });
-    });   
+    });
   });
 
   console.log("New connection");

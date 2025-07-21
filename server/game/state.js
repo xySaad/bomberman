@@ -10,11 +10,12 @@ export class Game {
     STARTED: "STARTED", // ready timer has finished
     ENDED: "ENDED", // only one player left or the time limit has ended
   };
-  #maxspeed = 1.6
-  #maxradius=4
+  #maxspeed = 1.6;
+  #maxradius = 4;
   #minPlayers = 2;
   #bombCounter = 0;
   #powerUpCounter = 0;
+  chatMessages = [];
   bombs = [];
   powerUps = [];
   get minPlayers() {
@@ -74,7 +75,7 @@ export class Game {
   getPlayersList() {
     return Array.from(this.#players.values()).map((player) => ({
       nickname: player.nickname,
-      position: player.getVisualPosition ? player.getVisualPosition() : player.position,
+      position: player.position,
     }));
   }
 
@@ -91,15 +92,26 @@ export class Game {
       });
       return null;
     }
+    if (nickname.length > 10 || nickname.length < 3) {
+      user.send({
+        type: "register_error",
+        reason: "Nickname must have between 3 and 10 characters!",
+      });
+      return null;
+    }
     const player = new Player(user.ws, nickname, this);
     this.players.add(player);
     this.broadcast({
-      position: player.getVisualPosition ? player.getVisualPosition() : player.position,
+      position: player.position,
       nickname: player.nickname,
       type: "new_player",
     });
     this.broadcast({
       type: "chat",
+      nickname: player.nickname,
+      alert: `joined the game`,
+    });
+    this.chatMessages.push({
       nickname: player.nickname,
       alert: `joined the game`,
     });
@@ -115,6 +127,10 @@ export class Game {
       nickname: player.nickname,
       alert: `left the game`,
     });
+    this.chatMessages.push({
+      nickname: player.nickname,
+      alert: `left the game`,
+    });
     if (this.phase === Game.PHASES.WAITING_PLAYERS) {
       if (this.players.size === 0) {
         this.#gamePool.deleteGame(this);
@@ -126,14 +142,13 @@ export class Game {
   }
   broadcast(msg, exclude) {
     this.#players.forEach((player) => {
-      if (player === exclude) return
+      if (player === exclude) return;
       player.send(msg);
     });
   }
 
-
   addBomb(x, y, radius) {
-    const sig = new Signal()
+    const sig = new Signal();
     if (this.tileHasBomb(x, y)) return [false];
     const timeToExplode = 3000;
 
@@ -143,11 +158,11 @@ export class Game {
       radius,
     };
 
-    this.broadcast({ type: "bomb_placed", bomb, });
+    this.broadcast({ type: "bomb_placed", bomb });
     setTimeout(() => {
       // player.explodeBomb
       this.explodeBomb(bomb.id);
-      sig.resolve()
+      sig.resolve();
     }, timeToExplode);
 
     this.bombs.push(bomb);
@@ -163,9 +178,9 @@ export class Game {
     const explodedTiles = [{ x, y }];
     const directions = [
       [0, -1], // up
-      [0, 1],  // down
+      [0, 1], // down
       [-1, 0], // left
-      [1, 0],  // right
+      [1, 0], // right
     ];
 
     for (const [dx, dy] of directions) {
@@ -184,13 +199,13 @@ export class Game {
         if (tileType === 2) {
           this.setTileType(nx, ny, 1);
           if (Math.random() < 0.2) {
-            this.spawnPowerUp(nx, ny, 'maxBombs');
+            this.spawnPowerUp(nx, ny, "maxBombs");
           } else if (Math.random() < 0.2) {
-            this.spawnPowerUp(nx, ny, 'bombRadius');
+            this.spawnPowerUp(nx, ny, "bombRadius");
           } else if (Math.random() < 0.2) {
-            this.spawnPowerUp(nx, ny, 'speed');
+            this.spawnPowerUp(nx, ny, "speed");
           }
-          break
+          break;
         }
       }
     }
@@ -199,19 +214,18 @@ export class Game {
     this.broadcast({
       type: "bomb_exploded",
       id: bombId,
-      positions: explodedTiles
+      positions: explodedTiles,
     });
   }
   removeBomb(bombId) {
-    const index = this.bombs.findIndex(bomb => bomb.id === bombId);
-    if (index === -1) return
+    const index = this.bombs.findIndex((bomb) => bomb.id === bombId);
+    if (index === -1) return;
 
     const bomb = this.bombs[index];
     const { x, y } = bomb.position;
     this.map[y][x].hasBomb = false;
     this.bombs.splice(index, 1);
   }
-
 
   getNextBombId() {
     return ++this.#bombCounter;
@@ -225,7 +239,7 @@ export class Game {
   }
 
   getBomb(bombId) {
-    return this.bombs.find(bomb => bomb.id === bombId);
+    return this.bombs.find((bomb) => bomb.id === bombId);
   }
 
   tileHasBomb(x, y) {
@@ -251,42 +265,44 @@ export class Game {
     this.powerUps.push(powerUp);
     this.broadcast({
       type: "power_up_spawned",
-      powerUp
+      powerUp,
     });
 
     return powerUp;
   }
   removePowerUp(powerUpId) {
-    const index = this.powerUps.findIndex(powerUp => powerUp.id === powerUpId);
+    const index = this.powerUps.findIndex(
+      (powerUp) => powerUp.id === powerUpId
+    );
     if (index !== -1) {
       this.powerUps.splice(index, 1);
       this.broadcast({
         type: "power_up_removed",
-        powerUpId: powerUpId
+        powerUpId: powerUpId,
       });
     }
   }
   getPowerUpAt(x, y) {
-    return this.powerUps.find(powerUp =>
-      powerUp.position.x === x && powerUp.position.y === y
+    return this.powerUps.find(
+      (powerUp) => powerUp.position.x === x && powerUp.position.y === y
     );
   }
 
   collectPowerUp(player, powerUpId) {
-    const powerUp = this.powerUps.find(p => p.id === powerUpId);
+    const powerUp = this.powerUps.find((p) => p.id === powerUpId);
     if (!powerUp) return false;
     switch (powerUp.type) {
-      case 'maxBombs':
+      case "maxBombs":
         player.maxBombs++;
         break;
-      case 'bombRadius':
+      case "bombRadius":
         if (player.bombRadius >= this.#maxradius) break;
 
-        player.bombRadius++
+        player.bombRadius++;
         break;
       case "speed":
         if (player.speed >= this.#maxspeed) break;
-        player.speed += 0.2
+        player.speed += 0.2;
         player.speed = parseFloat(player.speed.toFixed(1));
         break;
     }
@@ -304,8 +320,8 @@ export class Game {
       if (player.isDead) continue;
       const px = Math.round(player.position.x);
       const py = Math.round(player.position.y);
-      const playerHit = explodedTiles.some(tile =>
-        tile.x === px && tile.y === py
+      const playerHit = explodedTiles.some(
+        (tile) => tile.x === px && tile.y === py
       );
       if (playerHit) {
         player.takeDamage();
@@ -318,19 +334,22 @@ export class Game {
     }
   }
   checkGameEnd() {
-    const alivePlayers = Array.from(this.#players).filter(p => !p.isDead);
-    if (alivePlayers.length === 1&& this.#phase===Game.PHASES.STARTED) {
+    const alivePlayers = Array.from(this.#players).filter((p) => !p.isDead);
+    if (alivePlayers.length === 1 && this.#phase === Game.PHASES.STARTED) {
       this.#phase = Game.PHASES.ENDED;
-      alivePlayers[0].on("player_input", null)
-      this.broadcast({
-        type: "game_ended",
-        winner: alivePlayers[0].nickname
-      }, alivePlayers[0]);
+      alivePlayers[0].on("player_input", null);
+      this.broadcast(
+        {
+          type: "game_ended",
+          winner: alivePlayers[0].nickname,
+        },
+        alivePlayers[0]
+      );
 
       alivePlayers[0].send({
         type: "game_ended",
-        winner: "you"
-      })
+        winner: "you",
+      });
     }
   }
 }
