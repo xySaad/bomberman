@@ -59,18 +59,14 @@ export class User {
         (p) => p.nickname === data.nickname
       );
       if (player) {
-        if (player.moveTimeout) {
-          clearTimeout(player.moveTimeout);
-        }
         player.isMoving = true;
         if (player.position.x !== data.x) {
           player.scale = player.position.x > data.x ? -1 : 1;
+          player.isMoving = true;
+        } else {
+          player.isMoving = false;
         }
         player.position = { x: data.x, y: data.y };
-        player.moveTimeout = setTimeout(() => {
-          player.isMoving = false;
-          player.moveTimeout = null;
-        }, 150);
       }
     },
     bomb_placed: (data) => {
