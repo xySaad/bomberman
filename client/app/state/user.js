@@ -139,9 +139,7 @@ export class User {
         GameState.players.push(...msg.players);
         GameState.map = msg.map.map((row) => list(row));
         GameState.position = msg.position;
-        if (msg.chatMessages) {
-          GameState.chatMessages.push(...msg.chatMessages);
-        }
+        GameState.chatMessages.push(...msg.chatMessages);
         resolve();
       });
       this.on("register_error", (msg) => {

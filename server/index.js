@@ -10,12 +10,17 @@ const gamePool = new GamePool();
 
 wss.on("connection", (ws) => {
   const user = new User(ws);
-  user.on("register", (data) => {
+  const joinGame = (data) => {
     const game = gamePool.lookup();
     const player = game.createPlayer(user, data.nickname);
     if (player === null) return;
+    user.on("register", () => {
+      player.destroy();
+      const newGame = joinGame({ nickname: player.nickname });
+    });
     console.log("logged in as", player.nickname);
-    player.on("chat", (data) => {
+
+    user.on("chat", (data) => {
       const chatMessage = {
         type: "chat",
         nickname: player.nickname,
@@ -27,8 +32,9 @@ wss.on("connection", (ws) => {
         message: data.message,
       });
     });
-  });
-
+    return game;
+  };
+  user.on("register", joinGame);
   console.log("New connection");
 });
 
