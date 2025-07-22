@@ -54,9 +54,9 @@ export class Game {
     if (this.#players.size === this.#minPlayers) {
       try {
         this.#phase = Game.PHASES.WAITING_PLAYERS;
-        await this.lobbyCounter.start(2);
+        await this.lobbyCounter.start(20);
         this.#phase = Game.PHASES.GETTING_READY;
-        await this.lobbyCounter.start(1);
+        await this.lobbyCounter.start(10);
         this.#phase = Game.PHASES.STARTED;
         this.broadcast({ type: "game_started" });
         for (const player of this.#players) {
@@ -318,19 +318,26 @@ export class Game {
   damage(explodedTiles) {
     for (const player of this.#players) {
       if (player.isDead) continue;
-      const px = Math.round(player.position.x);
-      const py = Math.round(player.position.y);
-      const playerHit = explodedTiles.some(
-        (tile) => tile.x === px && tile.y === py
-      );
-      if (playerHit) {
-        player.takeDamage();
-        this.broadcast({
-          type: "player_damaged",
-          nickname: player.nickname,
-          health: player.health,
-        });
+      const { x, y } = player.position
+      const xs = player.getClosetBlock("x", x);
+      const ys = player.getClosetBlock("y", y);
+      outer:
+      for (const x of xs) {
+        for (const y of ys) {
+          const playerHit = explodedTiles.some((tile) => (tile.x === x && tile.y === y));
+
+          if (playerHit) {
+            player.takeDamage();
+            this.broadcast({
+              type: "player_damaged",
+              nickname: player.nickname,
+              health: player.health,
+            });
+            break outer
+          }
+        }
       }
+
     }
   }
   checkGameEnd() {

@@ -62,6 +62,8 @@ export class User {
       );
 
       if (player) {
+        if(data.direction) player.direction=data.direction
+        
         if (player.position.x !== data.x || player.position.y !== data.y) {
           player.isMoving = true;
         } else {

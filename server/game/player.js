@@ -11,6 +11,7 @@ export class Player extends User {
   maxBombs = 1;
   health = 3;
   bombRadius = 1;
+  direction=""
   bombs = 0;
   #intervalId = null;
   #activeKeys = {
@@ -44,6 +45,7 @@ export class Player extends User {
           this.moveTo(x, y)
           continue
         };
+        this.direction=key.split("Arrow")[1]
         const nextPosition = this.nextPosition(key);
         if (!nextPosition) return;
         const canMove = this.canMoveTo(...nextPosition);
@@ -98,6 +100,7 @@ export class Player extends User {
       type: "player_move",
       nickname: this.#nickname,
       ...(this.position = { x, y }),
+      direction:this.direction?.toLowerCase(),
     });
   }
   moveToSafestblock(nextX, nextY) {
