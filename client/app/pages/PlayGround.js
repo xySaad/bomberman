@@ -18,11 +18,6 @@ onkeydown = ({ code }) => {
       input: code,
       active: true,
     });
-    const direction = code.split("Arrow")[1]
-    if (direction) {
-      const player = GameState.players.value.find(p => p.nickname === SelfUser.nickname)
-      player.direction = direction.toLowerCase()
-    }
   }
 };
 

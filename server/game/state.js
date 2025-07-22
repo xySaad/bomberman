@@ -318,19 +318,26 @@ export class Game {
   damage(explodedTiles) {
     for (const player of this.#players) {
       if (player.isDead) continue;
-      const px = Math.round(player.position.x);
-      const py = Math.round(player.position.y);
-      const playerHit = explodedTiles.some(
-        (tile) => tile.x === px && tile.y === py
-      );
-      if (playerHit) {
-        player.takeDamage();
-        this.broadcast({
-          type: "player_damaged",
-          nickname: player.nickname,
-          health: player.health,
-        });
+      const { x, y } = player.position
+      const xs = player.getClosetBlock("x", x);
+      const ys = player.getClosetBlock("y", y);
+      outer:
+      for (const x of xs) {
+        for (const y of ys) {
+          const playerHit = explodedTiles.some((tile) => (tile.x === x && tile.y === y));
+
+          if (playerHit) {
+            player.takeDamage();
+            this.broadcast({
+              type: "player_damaged",
+              nickname: player.nickname,
+              health: player.health,
+            });
+            break outer
+          }
+        }
       }
+
     }
   }
   checkGameEnd() {
