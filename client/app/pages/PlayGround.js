@@ -18,6 +18,11 @@ onkeydown = ({ code }) => {
       input: code,
       active: true,
     });
+    const direction = code.split("Arrow")[1]
+    if (direction) {
+      const player = GameState.players.value.find(p => p.nickname === SelfUser.nickname)
+      player.direction = direction.toLowerCase()
+    }
   }
 };
 
@@ -76,15 +81,20 @@ export const PlayGround = () => {
         });
       }),
       players.map((player) => {
-        const pos = player.$.position;
-        const isMoving = player.$.isMoving;        
+        const { direction, position, isMoving, isDead } = player.$;
+
+
         return div({
-          class: ($) => `player ${$(isMoving) ? "moving" : ""}`,
+          class: ($) => {
+            if ($(isDead)) return "player dead";
+            if ($(player.$.damaged)) return "player damaged";
+            if (!$(isMoving)) return "player idle";
+            return `player ${$(direction)}`;
+          },
           style: ($) => {
-            const { x, y } = $(pos);
-            return `transform: translate(${x * OFFSET}px, ${
-              y * OFFSET
-            }px) scaleX(${player.scale || -1});`;
+            const { x, y } = $(position);
+            return `transform: translate(${x * OFFSET}px, ${y * OFFSET
+              }px) ;`;
           },
         });
       })
@@ -104,7 +114,7 @@ const StatsDisplay = () => {
     ),
     div({ class: "stat-item" }).add(
       span({ class: "stat-label", textContent: "❤️ Health: " }),
-      span({ class: "stat-value", textContent: (($) => `${$(stats).health}`)})
+      span({ class: "stat-value", textContent: (($) => `${$(stats).health}`) })
     ),
     div({ class: "stat-item" }).add(
       span({ class: "stat-label", textContent: "⚡ Speed: " }),

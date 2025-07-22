@@ -39,7 +39,11 @@ export class Player extends User {
     this.#game = game;
     this.#intervalId = setInterval(() => {
       for (const key in this.#activeKeys) {
-        if (!this.#activeKeys[key]) continue;
+        if (!this.#activeKeys[key]) {
+          const { x, y } = this.position
+          this.moveTo(x, y)
+          continue
+        };
         const nextPosition = this.nextPosition(key);
         if (!nextPosition) return;
         const canMove = this.canMoveTo(...nextPosition);

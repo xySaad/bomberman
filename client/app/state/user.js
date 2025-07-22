@@ -16,8 +16,7 @@ export class User {
   #socket = null;
   #events = {
     new_player: (player) => GameState.players.push(player),
-    player_deleted: (player) =>
-      GameState.players.purge((p) => p.nickname === player.nickname),
+    player_deleted: (player) => GameState.players.purge((p) => p.nickname === player.nickname),
     chat: (msg) => {
       GameState.chatMessages.push({
         nickname: msg.nickname,
@@ -42,8 +41,11 @@ export class User {
       );
       if (player) {
         player.health = data.health;
-        player.isDead = data.isDead;
+        player.damaged = true;
       }
+      setTimeout(() => {
+        player.damaged = false;
+      }, 600);
       if (data.nickname === SelfUser.nickname) {
         GameState.playerStats.value = {
           ...GameState.playerStats.value,
@@ -58,10 +60,9 @@ export class User {
       const player = GameState.players.value.find(
         (p) => p.nickname === data.nickname
       );
+
       if (player) {
-        player.isMoving = true;
-        if (player.position.x !== data.x) {
-          player.scale = player.position.x > data.x ? -1 : 1;
+        if (player.position.x !== data.x || player.position.y !== data.y) {
           player.isMoving = true;
         } else {
           player.isMoving = false;
